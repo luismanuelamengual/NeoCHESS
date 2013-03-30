@@ -19,7 +19,7 @@ abstract class InstitutionalSiteView extends BootstrapView
     {        
         $container = new Tag("div", array("class"=>"container"), array($this->createExpansionButton(), $this->createTitleLink(), $this->createCollapsiblePanel()));
         $innerPanel = new Tag("div", array("class"=>"navbar-inner"), $container);
-        return new Tag("div", array("class"=>"navbar navbar-inverse navbar-fixed-top"), $innerPanel);
+        return new Tag("div", array("class"=>"navbar navbar-fixed-top"), $innerPanel);
     }
     
     protected function createFooter ()
