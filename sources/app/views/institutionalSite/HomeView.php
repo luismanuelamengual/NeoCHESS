@@ -13,19 +13,11 @@ class HomeView extends InstitutionalSiteView
         return $container;
     }
     
-    protected function createHomeLink ()
-    {
-        $link = parent::createHomeLink();
-        $link->setAttribute("class", "active");
-        return $link;
-    }
-    
     protected function createCarouselComponent ()
     {
         $carousel = new CarouselComponent();
-        $carousel->addSlide($carousel->createImageSlide("http://twitter.github.com/bootstrap/assets/img/bootstrap-mdo-sfmoma-01.jpg", "First thumbnail Label", "Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit."));
-        $carousel->addSlide($carousel->createImageSlide("http://twitter.github.com/bootstrap/assets/img/bootstrap-mdo-sfmoma-02.jpg", "Second thumbnail Label", "Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit."));
-        $carousel->addSlide($carousel->createImageSlide("http://twitter.github.com/bootstrap/assets/img/bootstrap-mdo-sfmoma-03.jpg", "Third thumbnail Label", "Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit."));
+        $carousel->setWidth(1200);
+        $carousel->addSlide($carousel->createImageSlide("images/art/chess_1.jpg", "Diseño moderno", "Juegue ajedrez con la más moderna interfaz"));
         $carousel->build($this);
         return $carousel;
     }
@@ -33,8 +25,9 @@ class HomeView extends InstitutionalSiteView
     protected function createSectionsContainer ()
     {
         $container = new Tag("div", array("class"=>"row"));
-        $container->add ($this->createSection("Nuestro Equipo", App::getInstance()->getPreferences()->title . " esta formado por un grupo de Jóvenes Ingenieros especializados en las áreas de Electrónica, Computación y Sistemas. Nuestra sólida formación profesional y experiencia en desarrollos de sistemas integrales son la base para encontrar soluciones a su medida."));
-        $container->add ($this->createSection("Servicios", "Conozca nuestros servicios: monitoreo de vehículos, gestión de flotas, perfiles de conducción, control de mantenimiento, automatización de procesos industriales y optimización de recursos entre otros."));
+        $container->add ($this->createSection("Juegue", App::getInstance()->getPreferences()->title . " le permite jugar con jugadores de todo el mundo a traves de internet"));
+        $container->add ($this->createSection("Compita", "Todos los días hay torneos en que los jugadores pueden inscribirse"));
+        $container->add ($this->createSection("Mejore", "Mejore sus habilidades e incremente su ELO para escalar en el ranking de NeoCHESS"));
         return $container;
     }
     
@@ -42,8 +35,7 @@ class HomeView extends InstitutionalSiteView
     {
         $titleContainer = new Tag("h2", array(), $title);
         $descriptionContainer = new Tag("p", array(), $description);
-        $button = new Tag("p", array(), new Tag("a", array("class"=>"btn"), "Leer más &raquo;"));
-        return new Tag("div", array("class"=>"span6"), array($titleContainer, $descriptionContainer, $button));
+        return new Tag("div", array("class"=>"span4"), array($titleContainer, $descriptionContainer));
     }
 }
 

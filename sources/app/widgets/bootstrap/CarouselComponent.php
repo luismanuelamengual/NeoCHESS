@@ -48,16 +48,39 @@ class CarouselComponent extends HTMLComponent
         return sizeof($this->slides);
     }
     
+    public function setWidth ($width)
+    {
+        $this->attributes["width"] = $width;
+    }
+    
+    public function setHeight ($height)
+    {
+        $this->attributes["height"] = $height;
+    }
+    
     protected function createHTMLElement (HTMLView $view) 
     {
-        $component = new Tag("div", array("id"=>($this->attributes["id"]), "class"=>"carousel slide"));
-        if ($this->attributes["showIndicatorsControl"])
-            $component->add ($this->createIndicatorsControl());
+        $attributes = array("id"=>($this->attributes["id"]), "class"=>"carousel slide");
+        if (!empty($this->attributes["width"]) || !empty($this->attributes["height"]))
+        {
+            $style = "margin: 0px auto;";
+            if (!empty($this->attributes["width"]))
+                $style .= "max-width:" . $this->attributes["width"] . "px;";
+            if (!empty($this->attributes["height"]))
+                $style .= "max-width:" . $this->attributes["height"] . "px;";
+            $attributes["style"] = $style;
+        }
+        $component = new Tag("div", $attributes);
         $component->add ($this->createSlidesContainer());
-        if ($this->attributes["showPreviousSlideControl"])
-            $component->add ($this->createPreviousSlideControl());
-        if ($this->attributes["showNextSlideControl"])
-            $component->add ($this->createNextSlideControl());
+        if (sizeof($this->slides) > 1)
+        {
+            if ($this->attributes["showIndicatorsControl"])
+                $component->add ($this->createIndicatorsControl());
+            if ($this->attributes["showPreviousSlideControl"])
+                $component->add ($this->createPreviousSlideControl());
+            if ($this->attributes["showNextSlideControl"])
+                $component->add ($this->createNextSlideControl());
+        }
         return $component;
     }
     
