@@ -7,45 +7,21 @@ class InstitutionalSiteController extends Controller
         App::getInstance()->getView('institutionalSite/home')->render();
     }
     
-    public function showLoginAction ()
+    public function showRegistrationAction ()
     {
-        App::getInstance()->getView('institutionalSite/login')->render();
+        echo "TODO: Mostrar vista de registración";
     }
     
     public function showLoginErrorAction ()
     { 
-        $view = App::getInstance()->getView('institutionalSite/login');
-        $view->showLoginError(true);
-        $view->render();
+        echo "TODO: Mostrar vista de error de login";
     }
     
-    public function showAboutUsAction ()
+    public function loginAction ($username, $password)
     {
-        App::getInstance()->getView('institutionalSite/aboutUs')->render();
-    }
-    
-    public function showServicesAction ()
-    {
-        App::getInstance()->getView('institutionalSite/services')->render();
-    }
-    
-    public function showContactUsAction ()
-    {
-        App::getInstance()->getView('institutionalSite/contactUs')->render();
-    }
-    
-    public function sendMessageAction ($name, $email, $website, $message)
-    {
-        $view = App::getInstance()->getView('institutionalSite/contactUs');
-        $view->setMessageSent (true);
-        $view->render();
-    }
-    
-    public function loginAction ()
-    {
-        App::getInstance()->executeAction('session/start');
+        App::getInstance()->getController('session')->startAction($username, $password);
         if (App::getInstance()->getSession()->isStarted())    
-            App::getInstance()->redirectAction('site/desktop/showDesktop');
+            App::getInstance()->redirectAction('site/showHome');
         else
             App::getInstance()->redirectAction('institutionalSite/showLoginError');
     }

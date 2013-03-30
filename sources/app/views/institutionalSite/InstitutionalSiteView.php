@@ -19,7 +19,7 @@ abstract class InstitutionalSiteView extends BootstrapView
     {        
         $container = new Tag("div", array("class"=>"container"), array($this->createExpansionButton(), $this->createTitleLink(), $this->createCollapsiblePanel()));
         $innerPanel = new Tag("div", array("class"=>"navbar-inner"), $container);
-        return new Tag("div", array("class"=>"navbar navbar-fixed-top"), $innerPanel);
+        return new Tag("div", array("class"=>"navbar navbar-inverse navbar-fixed-top"), $innerPanel);
     }
     
     protected function createFooter ()
@@ -45,10 +45,11 @@ abstract class InstitutionalSiteView extends BootstrapView
     
     protected function createLoginForm ()
     {
-        $usernameField = new Tag("input", array("class"=>"span2", "type"=>"text", "placeholder"=>"Nombre de usuario"));
-        $passwordField = new Tag("input", array("class"=>"span2", "type"=>"password", "placeholder"=>"Contraseña"));
-        $loginButton = new Tag("button", array("type"=>"button", "class"=>"btn"), "Iniciar sesión");
-        return new Tag("form", array("class"=>"navbar-form pull-right"), array($usernameField, $passwordField, $loginButton));
+        $usernameField = new Tag("input", array("name"=>"username", "class"=>"span2", "type"=>"text", "placeholder"=>"Nombre de usuario"));
+        $passwordField = new Tag("input", array("name"=>"password", "class"=>"span2", "type"=>"password", "placeholder"=>"Contraseña"));
+        $loginButton = new Tag("input", array("type"=>"submit", "class"=>"btn", "value"=>"Iniciar sesión"));
+        $registerButton = new Tag("a", array("type"=>"button", "class"=>"btn", "href"=>App::getInstance()->getUrl("institutionalSite/showRegistration")), "Registrarse");
+        return new Tag("form", array("action"=>App::getInstance()->getUrl("institutionalSite/login"), "method"=>"post", "class"=>"navbar-form pull-right"), array($usernameField, $passwordField, $loginButton, $registerButton));
     }
     
     protected abstract function createContainer ();

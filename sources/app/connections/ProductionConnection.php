@@ -4,7 +4,7 @@ class ProductionConnection extends Connection
 {
     public function getDsn ()
     {
-        return "mysql:host=localhost;dbname=telemetrix";
+        return "mysql:host=localhost;dbname=neochess";
     }
     
     public function getUsername ()

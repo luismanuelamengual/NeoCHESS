@@ -7,18 +7,17 @@ class SessionController extends Controller
         App::getInstance()->getSession()->destroy();
         $connection = App::getInstance()->getConnection("production");
         $doUser = $connection->getDataObject("User");
-        $doUser->addWhereCondition ('username="' . $username . '"');
+        $doUser->addWhereCondition ('name="' . $username . '"');
         $doUser->addWhereCondition ('password="' . $password . '"');
         if ($doUser->find(true))
         {
             App::getInstance()->getSession()->startSession();
             App::getInstance()->getSession()->sessionId = session_id();
             App::getInstance()->getSession()->sessionName = session_name();
-            App::getInstance()->getSession()->userName = $doUser->username;
+            App::getInstance()->getSession()->userName = $doUser->name;
             App::getInstance()->getSession()->firstName = $doUser->firstname;
             App::getInstance()->getSession()->lastName = $doUser->lastname;
-            App::getInstance()->getSession()->clientId = $doUser->clientid;
-            App::getInstance()->getSession()->profileId = $doUser->profileid;
+            App::getInstance()->getSession()->elo = $doUser->elo;
         }
     }
     
