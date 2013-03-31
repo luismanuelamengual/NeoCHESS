@@ -40,7 +40,10 @@ abstract class SiteView extends BootstrapView
     
     protected function createCollapsiblePanel ()
     {
-        return new Tag("div", array("class"=>"nav-collapse collapse"), "");
+        $session = App::getInstance()->getSession();
+        $closeSessionButton = new Tag("a", array("class"=>"btn btn-primary pull-right", "style"=>"margin-left:10px;", "href"=>App::getInstance()->getUrl("site/logout")), "Salir");
+        $loggedUserText = new Tag("p", array("class"=>"navbar-text pull-right"), "Usuario: " . $session->firstName . " " . $session->lastName);     
+        return new Tag("div", array("class"=>"nav-collapse collapse"), array($closeSessionButton, $loggedUserText));
     }
     
     protected abstract function createContainer ();

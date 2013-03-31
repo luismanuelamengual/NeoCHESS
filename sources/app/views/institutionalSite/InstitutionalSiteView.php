@@ -47,7 +47,7 @@ abstract class InstitutionalSiteView extends BootstrapView
     {
         $usernameField = new Tag("input", array("name"=>"username", "class"=>"span2", "type"=>"text", "placeholder"=>"Nombre de usuario"));
         $passwordField = new Tag("input", array("name"=>"password", "class"=>"span2", "type"=>"password", "placeholder"=>"Contraseña"));
-        $loginButton = new Tag("input", array("type"=>"submit", "class"=>"btn", "value"=>"Iniciar sesión"));
+        $loginButton = new Tag("input", array("type"=>"submit", "class"=>"btn btn-primary", "value"=>"Iniciar sesión"));
         $registerButton = new Tag("a", array("type"=>"button", "class"=>"btn", "href"=>App::getInstance()->getUrl("institutionalSite/showRegistration")), "Registrarse");
         return new Tag("form", array("action"=>App::getInstance()->getUrl("institutionalSite/login"), "method"=>"post", "class"=>"navbar-form pull-right"), array($usernameField, $passwordField, $loginButton, $registerButton));
     }

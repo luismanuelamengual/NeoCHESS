@@ -17,9 +17,9 @@ class InstitutionalSiteController extends Controller
         echo "TODO: Mostrar vista de error de login";
     }
     
-    public function loginAction ($username, $password)
+    public function loginAction ()
     {
-        App::getInstance()->getController('session')->startAction($username, $password);
+        App::getInstance()->executeAction('session/start');
         if (App::getInstance()->getSession()->isStarted())    
             App::getInstance()->redirectAction('site/showHome');
         else
