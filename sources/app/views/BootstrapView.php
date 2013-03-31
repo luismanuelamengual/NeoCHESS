@@ -1,6 +1,6 @@
 <?php
 
-require_once ("app/views/HTMLView.php");
+require_once ("NeoPHP/views/HTMLView.php");
 
 abstract class BootstrapView extends HTMLView
 {
