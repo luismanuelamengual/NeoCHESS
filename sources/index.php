@@ -1,5 +1,6 @@
 <?php
 require_once ("NeoPHP/App.php");
-App::getInstance()->getPreferences()->title = "NEOCHESS";
-App::getInstance()->start();
+App::getInstance()->getSettings()->title = "NEOCHESS";
+App::getInstance()->handleRequest();
+
 ?>

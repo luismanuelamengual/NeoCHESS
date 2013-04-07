@@ -25,7 +25,7 @@ class HomeView extends InstitutionalSiteView
     protected function createSectionsContainer ()
     {
         $container = new Tag("div", array("class"=>"row"));
-        $container->add ($this->createSection("Juegue", App::getInstance()->getPreferences()->title . " le permite jugar con jugadores de todo el mundo a traves de internet"));
+        $container->add ($this->createSection("Juegue", App::getInstance()->getSettings()->title . " le permite jugar con jugadores de todo el mundo a traves de internet"));
         $container->add ($this->createSection("Compita", "Todos los días hay torneos en que los jugadores pueden inscribirse"));
         $container->add ($this->createSection("Mejore", "Mejore sus habilidades e incremente su ELO para escalar en el ranking de NeoCHESS"));
         return $container;

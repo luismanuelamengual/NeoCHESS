@@ -7,7 +7,7 @@ abstract class InstitutionalSiteView extends BootstrapView
     protected function build()
     {
         parent::build();
-        $this->setTitle(App::getInstance()->getPreferences()->title);
+        $this->setTitle(App::getInstance()->getSettings()->title);
         $this->addMeta (array("charset"=>"utf-8"));
         $this->addStyleFile("css/main.css");
         $this->bodyTag->add ($this->createHeader());
@@ -24,7 +24,7 @@ abstract class InstitutionalSiteView extends BootstrapView
     
     protected function createFooter ()
     {
-        $title = new Tag("p", array(), "&copy; " . App::getInstance()->getPreferences()->title . " 2013"); 
+        $title = new Tag("p", array(), "&copy; " . App::getInstance()->getSettings()->title . " 2013"); 
         return new Tag("footer", array("class"=>"footer"), new Tag("div", array("class"=>"container"), $title));
     }
     
@@ -35,7 +35,7 @@ abstract class InstitutionalSiteView extends BootstrapView
     
     protected function createTitleLink ()
     {
-        return new Tag("a", array("class"=>"brand", "href"=>App::getInstance()->getUrl("institutionalSite/showHome")), "<b>".App::getInstance()->getPreferences()->title."</b>");
+        return new Tag("a", array("class"=>"brand", "href"=>App::getInstance()->getUrl("institutionalSite/showHome")), "<b>".App::getInstance()->getSettings()->title."</b>");
     }
     
     protected function createCollapsiblePanel ()
