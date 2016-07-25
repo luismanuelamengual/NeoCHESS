@@ -4,8 +4,7 @@ namespace org\neochess\core;
 
 class Board
 {
-    const SQUARE_OFFSIDE = -1;
-    const SQUARE_EMPTY = 0;
+    const EMPTY_SQUARE = 0;
     
     const WHITE = 1;
     const BLACK = -1;
@@ -121,12 +120,64 @@ class Board
     
     public static function getOffsetSquare ($square, $horizontalOffset, $verticalOffset)
     {
-        return self::$squareOffset[($square + 26) + ($verticalOffset * 8) + $horizontalOffset];
+        return self::$squareOffset[($square + 26) - ($verticalOffset * 8) + $horizontalOffset];
     }
     
     public function __construct ()
     {
-        $this->squancres = [];
+        $this->clear();
+    }
+    
+    public function setInitialPosition ()
+    {
+        $this->clear();
+        $this->setPiece(self::A1, self::WHITE_ROOK);
+        $this->setPiece(self::H1, self::WHITE_ROOK);
+        $this->setPiece(self::B1, self::WHITE_KNIGHT);
+        $this->setPiece(self::G1, self::WHITE_KNIGHT);
+        $this->setPiece(self::C1, self::WHITE_BISHOP);
+        $this->setPiece(self::F1, self::WHITE_BISHOP);
+        $this->setPiece(self::D1, self::WHITE_QUEEN);
+        $this->setPiece(self::E1, self::WHITE_KING);
+        $this->setPiece(self::A2, self::WHITE_PAWN);
+        $this->setPiece(self::B2, self::WHITE_PAWN);
+        $this->setPiece(self::C2, self::WHITE_PAWN);
+        $this->setPiece(self::D2, self::WHITE_PAWN);
+        $this->setPiece(self::E2, self::WHITE_PAWN);
+        $this->setPiece(self::F2, self::WHITE_PAWN);
+        $this->setPiece(self::G2, self::WHITE_PAWN);
+        $this->setPiece(self::H2, self::WHITE_PAWN);
+        $this->setPiece(self::A8, self::BLACK_ROOK);
+        $this->setPiece(self::H8, self::BLACK_ROOK);
+        $this->setPiece(self::B8, self::BLACK_KNIGHT);
+        $this->setPiece(self::G8, self::BLACK_KNIGHT);
+        $this->setPiece(self::C8, self::BLACK_BISHOP);
+        $this->setPiece(self::F8, self::BLACK_BISHOP);
+        $this->setPiece(self::D8, self::BLACK_QUEEN);
+        $this->setPiece(self::E8, self::BLACK_KING);
+        $this->setPiece(self::A7, self::BLACK_PAWN);
+        $this->setPiece(self::B7, self::BLACK_PAWN);
+        $this->setPiece(self::C7, self::BLACK_PAWN);
+        $this->setPiece(self::D7, self::BLACK_PAWN);
+        $this->setPiece(self::E7, self::BLACK_PAWN);
+        $this->setPiece(self::F7, self::BLACK_PAWN);
+        $this->setPiece(self::G7, self::BLACK_PAWN);
+        $this->setPiece(self::H7, self::BLACK_PAWN);
+        $this->castleState = self::WHITE_CASTLE_SHORT | self::WHITE_CASTLE_LONG | self::BLACK_CASTLE_SHORT | self::BLACK_CASTLE_LONG;
+    }
+    
+    public function clear ()
+    {
+        $this->squares = [
+            self::EMPTY_SQUARE, self::EMPTY_SQUARE , self::EMPTY_SQUARE , self::EMPTY_SQUARE, self::EMPTY_SQUARE, self::EMPTY_SQUARE, self::EMPTY_SQUARE, self::EMPTY_SQUARE,
+            self::EMPTY_SQUARE, self::EMPTY_SQUARE , self::EMPTY_SQUARE , self::EMPTY_SQUARE, self::EMPTY_SQUARE, self::EMPTY_SQUARE, self::EMPTY_SQUARE, self::EMPTY_SQUARE,
+            self::EMPTY_SQUARE, self::EMPTY_SQUARE , self::EMPTY_SQUARE , self::EMPTY_SQUARE, self::EMPTY_SQUARE, self::EMPTY_SQUARE, self::EMPTY_SQUARE, self::EMPTY_SQUARE,
+            self::EMPTY_SQUARE, self::EMPTY_SQUARE , self::EMPTY_SQUARE , self::EMPTY_SQUARE, self::EMPTY_SQUARE, self::EMPTY_SQUARE, self::EMPTY_SQUARE, self::EMPTY_SQUARE,
+            self::EMPTY_SQUARE, self::EMPTY_SQUARE , self::EMPTY_SQUARE , self::EMPTY_SQUARE, self::EMPTY_SQUARE, self::EMPTY_SQUARE, self::EMPTY_SQUARE, self::EMPTY_SQUARE,
+            self::EMPTY_SQUARE, self::EMPTY_SQUARE , self::EMPTY_SQUARE , self::EMPTY_SQUARE, self::EMPTY_SQUARE, self::EMPTY_SQUARE, self::EMPTY_SQUARE, self::EMPTY_SQUARE,
+            self::EMPTY_SQUARE, self::EMPTY_SQUARE , self::EMPTY_SQUARE , self::EMPTY_SQUARE, self::EMPTY_SQUARE, self::EMPTY_SQUARE, self::EMPTY_SQUARE, self::EMPTY_SQUARE,
+            self::EMPTY_SQUARE, self::EMPTY_SQUARE , self::EMPTY_SQUARE , self::EMPTY_SQUARE, self::EMPTY_SQUARE, self::EMPTY_SQUARE, self::EMPTY_SQUARE, self::EMPTY_SQUARE
+        ];
         $this->epSquare = -1;
         $this->castleState = 0;
     }
