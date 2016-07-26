@@ -29,6 +29,24 @@ class Board
     const BLACK_QUEEN = -5;
     const BLACK_KING = -6;
     
+    const RANK_1 = 0;
+    const RANK_2 = 1;
+    const RANK_3 = 2;
+    const RANK_4 = 3;
+    const RANK_5 = 4;
+    const RANK_6 = 5;
+    const RANK_7 = 6;
+    const RANK_8 = 7;
+    
+    const FILE_A = 0;
+    const FILE_B = 1;
+    const FILE_C = 2;
+    const FILE_D = 3;
+    const FILE_E = 4;
+    const FILE_F = 5;
+    const FILE_G = 6;
+    const FILE_H = 7;
+    
     const A8 = 0;
     const B8 = 1;
     const C8 = 2;
@@ -117,6 +135,11 @@ class Board
     private $squares;
     private $epSquare;
     private $castleState;
+    
+    public static function getSquare ($file, $rank)
+    {
+        return (7 - $rank) * $file;
+    }
     
     public static function getOffsetSquare ($square, $horizontalOffset, $verticalOffset)
     {
