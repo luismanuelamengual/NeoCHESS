@@ -2,16 +2,18 @@
 
 namespace org\neochess\console;
 
-use NeoPHP\console\ConsoleListener;
-use org\neochess\core\Board;
-use org\neochess\utils\BoardUtils;
+use NeoPHP\console\ConsoleApplication;
+use NeoPHP\console\ConsoleCommandExecutor;
 
-class MainCommandExecutor implements ConsoleListener
+class MainCommandExecutor extends ConsoleCommandExecutor
 {
-    public function onCommand($command, $parameters)
+    public function onCommandEntered(ConsoleApplication $application, $command, array $parameters = array())
     {
-        $board = new Board();
-        $board->setInitialPosition();
-        BoardUtils::printBoard($board);
+        switch ($command)
+        {
+            case "exit":
+                $application->stop();
+                break;
+        }
     }
 }

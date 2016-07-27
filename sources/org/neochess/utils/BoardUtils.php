@@ -36,6 +36,7 @@ abstract class BoardUtils
             print "   ";
             print self::getBoardFile($printFile);
         }
+        print "\n";
     }
     
     public static function getBoardRank ($rank)
