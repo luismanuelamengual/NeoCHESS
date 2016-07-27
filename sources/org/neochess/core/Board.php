@@ -132,9 +132,13 @@ class Board
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
     ];
     
+    private $sideToMove;
     private $squares;
     private $epSquare;
-    private $castleState;
+    private $whiteCastleShort;
+    private $whiteCastleLong;
+    private $blackCastleShort;
+    private $blackCastleLong;
     
     public static function getSquare ($file, $rank)
     {
@@ -186,7 +190,11 @@ class Board
         $this->setPiece(self::F7, self::BLACK_PAWN);
         $this->setPiece(self::G7, self::BLACK_PAWN);
         $this->setPiece(self::H7, self::BLACK_PAWN);
-        $this->castleState = self::WHITE_CASTLE_SHORT | self::WHITE_CASTLE_LONG | self::BLACK_CASTLE_SHORT | self::BLACK_CASTLE_LONG;
+        $this->whiteCastleLong = true;
+        $this->whiteCastleShort = true;
+        $this->blackCastleLong = true;
+        $this->blackCastleShort = true;
+        $this->sideToMove = self::WHITE;
     }
     
     public function clear ()
@@ -195,7 +203,11 @@ class Board
         for ($square = self::A1; $square <= self::H8; $square++)
             $this->squares[$square] = self::EMPTY_SQUARE;
         $this->epSquare = -1;
-        $this->castleState = 0;
+        $this->whiteCastleLong = false;
+        $this->whiteCastleShort = false;
+        $this->blackCastleLong = false;
+        $this->blackCastleShort = false;
+        $this->sideToMove = self::WHITE;
     }
     
     public function getPiece ($square)
@@ -218,13 +230,53 @@ class Board
         $this->epSquare = $square;
     }
     
-    public function getCastleState()
+    public function getSideToMove()
     {
-        return $this->castleState;
+        return $this->sideToMove;
     }
 
-    public function setCastleState($castleState)
+    public function setSideToMove($sideToMove)
     {
-        $this->castleState = $castleState;
+        $this->sideToMove = $sideToMove;
+    }
+
+    public function getWhiteCastleShort()
+    {
+        return $this->whiteCastleShort;
+    }
+
+    public function getWhiteCastleLong()
+    {
+        return $this->whiteCastleLong;
+    }
+
+    public function getBlackCastleShort()
+    {
+        return $this->blackCastleShort;
+    }
+
+    public function getBlackCastleLong()
+    {
+        return $this->blackCastleLong;
+    }
+
+    public function setWhiteCastleShort($whiteCastleShort)
+    {
+        $this->whiteCastleShort = $whiteCastleShort;
+    }
+
+    public function setWhiteCastleLong($whiteCastleLong)
+    {
+        $this->whiteCastleLong = $whiteCastleLong;
+    }
+
+    public function setBlackCastleShort($blackCastleShort)
+    {
+        $this->blackCastleShort = $blackCastleShort;
+    }
+
+    public function setBlackCastleLong($blackCastleLong)
+    {
+        $this->blackCastleLong = $blackCastleLong;
     }
 }
