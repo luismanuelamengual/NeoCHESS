@@ -117,38 +117,36 @@ class Board
     const BLACK_CASTLE_SHORT = 4;
     const BLACK_CASTLE_LONG = 8;
     
-    private static $squareOffset = [
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, 56, 57, 58, 59, 60, 61, 62, 63, -1, -1,
-        -1, -1, 48, 49, 50, 51, 52, 53, 54, 55, -1, -1,
-        -1, -1, 40, 41, 42, 43, 44, 45, 46, 47, -1, -1,
-        -1, -1, 32, 33, 34, 35, 36, 37, 38, 39, -1, -1,
-        -1, -1, 24, 25, 26, 27, 28, 29, 30, 31, -1, -1,
-        -1, -1, 16, 17, 18, 19, 20, 21, 22, 23, -1, -1,
-        -1, -1,  8,  9, 10, 11, 12, 13, 14, 15, -1, -1,
-        -1, -1,  0,  1,  2,  3,  4,  5,  6,  7, -1, -1,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
-    ];
-    
     private $sideToMove;
     private $squares;
     private $epSquare;
-    private $whiteCastleShort;
-    private $whiteCastleLong;
-    private $blackCastleShort;
-    private $blackCastleLong;
+    private $castleState;
     
-    public static function getSquare ($file, $rank)
-    {
-        return ($rank * 8) + $file;
-    }
+    private static $mailbox = [
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
+        -1, 56, 57, 58, 59, 60, 61, 62, 63, -1, 
+        -1, 48, 49, 50, 51, 52, 53, 54, 55, -1, 
+        -1, 40, 41, 42, 43, 44, 45, 46, 47, -1, 
+        -1, 32, 33, 34, 35, 36, 37, 38, 39, -1, 
+        -1, 24, 25, 26, 27, 28, 29, 30, 31, -1, 
+        -1, 16, 17, 18, 19, 20, 21, 22, 23, -1, 
+        -1,  8,  9, 10, 11, 12, 13, 14, 15, -1, 
+        -1,  0,  1,  2,  3,  4,  5,  6,  7, -1, 
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 
+    ];
     
-    public static function getOffsetSquare ($square, $horizontalOffset, $verticalOffset)
-    {
-        return self::$squareOffset[($square + 26) + ($verticalOffset * 8) + $horizontalOffset];
-    }
+    private static $mailbox64 = [
+	91, 92, 93, 94, 95, 96, 97, 98,
+        81, 82, 83, 84, 85, 86, 87, 88,
+        71, 72, 73, 74, 75, 76, 77, 78,
+        61, 62, 63, 64, 65, 66, 67, 68,
+        51, 52, 53, 54, 55, 56, 57, 58,
+        41, 42, 43, 44, 45, 46, 47, 48,
+        31, 32, 33, 34, 35, 36, 37, 38,
+        21, 22, 23, 24, 25, 26, 27, 28
+    ];
     
     public function __construct ()
     {
@@ -190,10 +188,7 @@ class Board
         $this->setPiece(self::F7, self::BLACK_PAWN);
         $this->setPiece(self::G7, self::BLACK_PAWN);
         $this->setPiece(self::H7, self::BLACK_PAWN);
-        $this->whiteCastleLong = true;
-        $this->whiteCastleShort = true;
-        $this->blackCastleLong = true;
-        $this->blackCastleShort = true;
+        $this->castleState = self::WHITE_CASTLE_LONG | self::WHITE_CASTLE_SHORT | self::BLACK_CASTLE_LONG | self::BLACK_CASTLE_SHORT;
         $this->sideToMove = self::WHITE;
     }
     
@@ -203,10 +198,7 @@ class Board
         for ($square = self::A1; $square <= self::H8; $square++)
             $this->squares[$square] = self::EMPTY_SQUARE;
         $this->epSquare = -1;
-        $this->whiteCastleLong = false;
-        $this->whiteCastleShort = false;
-        $this->blackCastleLong = false;
-        $this->blackCastleShort = false;
+        $this->castleState = 0;
         $this->sideToMove = self::WHITE;
     }
     
@@ -239,44 +231,34 @@ class Board
     {
         $this->sideToMove = $sideToMove;
     }
-
-    public function getWhiteCastleShort()
+    
+    public function getCastleState()
     {
-        return $this->whiteCastleShort;
+        return $this->castleState;
     }
 
-    public function getWhiteCastleLong()
+    public function setCastleState($castleState)
     {
-        return $this->whiteCastleLong;
+        $this->castleState = $castleState;
     }
-
-    public function getBlackCastleShort()
+    
+    public static function getSquare ($file, $rank)
     {
-        return $this->blackCastleShort;
+        return ($rank * 8) + $file;
     }
-
-    public function getBlackCastleLong()
+    
+    public static function getOffsetSquare ($square, $horizontalOffset, $verticalOffset)
     {
-        return $this->blackCastleLong;
+        return self::$mailbox[self::$mailbox64[$square] - ($verticalOffset * 10) + $horizontalOffset];
     }
-
-    public function setWhiteCastleShort($whiteCastleShort)
+    
+    public static function getSquareFile ($square)
     {
-        $this->whiteCastleShort = $whiteCastleShort;
+        return $square & 7;
     }
-
-    public function setWhiteCastleLong($whiteCastleLong)
+    
+    public static function getSquareRank ($square)
     {
-        $this->whiteCastleLong = $whiteCastleLong;
-    }
-
-    public function setBlackCastleShort($blackCastleShort)
-    {
-        $this->blackCastleShort = $blackCastleShort;
-    }
-
-    public function setBlackCastleLong($blackCastleLong)
-    {
-        $this->blackCastleLong = $blackCastleLong;
+        return $square >> 3;
     }
 }
