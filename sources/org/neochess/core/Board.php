@@ -4,30 +4,30 @@ namespace org\neochess\core;
 
 class Board
 {
-    const EMPTY_SQUARE = -1;
+    const EMPTY_SQUARE = 0;
     
-    const WHITE = 0;
-    const BLACK = 6;
+    const WHITE = 1;
+    const BLACK = -1;
     
-    const PAWN = 0;
-    const KNIGHT = 1;
-    const BISHOP = 2;
-    const ROOK = 3;
-    const QUEEN = 4;
-    const KING = 5;
+    const PAWN = 1;
+    const KNIGHT = 2;
+    const BISHOP = 3;
+    const ROOK = 4;
+    const QUEEN = 5;
+    const KING = 6;
     
-    const WHITE_PAWN = 0;
-    const WHITE_KNIGHT = 1;
-    const WHITE_BISHOP = 2;
-    const WHITE_ROOK = 3;
-    const WHITE_QUEEN = 4;
-    const WHITE_KING = 5;
-    const BLACK_PAWN = 6;
-    const BLACK_KNIGHT = 7;
-    const BLACK_BISHOP = 8;
-    const BLACK_ROOK = 9;
-    const BLACK_QUEEN = 10;
-    const BLACK_KING = 11;
+    const WHITE_PAWN = 1;
+    const WHITE_KNIGHT = 2;
+    const WHITE_BISHOP = 3;
+    const WHITE_ROOK = 4;
+    const WHITE_QUEEN = 5;
+    const WHITE_KING = 6;
+    const BLACK_PAWN = -1;
+    const BLACK_KNIGHT = -2;
+    const BLACK_BISHOP = -3;
+    const BLACK_ROOK = -4;
+    const BLACK_QUEEN = -5;
+    const BLACK_KING = -6;
     
     const RANK_1 = 0;
     const RANK_2 = 1;
@@ -121,6 +121,7 @@ class Board
     private $squares;
     private $epSquare;
     private $castleState;
+    private $historySlots;
     
     private static $mailbox = [
         -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
@@ -200,6 +201,7 @@ class Board
         $this->epSquare = -1;
         $this->castleState = 0;
         $this->sideToMove = self::WHITE;
+        $this->historySlots = [];
     }
     
     public function getPiece ($square)
@@ -260,5 +262,45 @@ class Board
     public static function getSquareRank ($square)
     {
         return $square >> 3;
+    }
+    
+    public function isSquareAttacked ($square, $side)
+    {
+        for ($testSquare = self::A1; $testSquare <= self::H8; $testSquare++)
+        {
+            $piece = $this->squares[$testSquare];
+            
+            if (($piece > 0 && $side == self::WHITE) && ($piece < 0 && $side == self::BLACK)) 
+            {
+//                    if (piece[i] == PAWN) {
+//                            if (s == LIGHT) {
+//                                    if (COL(i) != 0 && i - 9 == sq)
+//                                            return TRUE;
+//                                    if (COL(i) != 7 && i - 7 == sq)
+//                                            return TRUE;
+//                            }
+//                            else {
+//                                    if (COL(i) != 0 && i + 7 == sq)
+//                                            return TRUE;
+//                                    if (COL(i) != 7 && i + 9 == sq)
+//                                            return TRUE;
+//                            }
+//                    }
+//                    else
+//                            for (j = 0; j < offsets[piece[i]]; ++j)
+//                                    for (n = i;;) {
+//                                            n = mailbox[mailbox64[n] + offset[piece[i]][j]];
+//                                            if (n == -1)
+//                                                    break;
+//                                            if (n == sq)
+//                                                    return TRUE;
+//                                            if (color[n] != EMPTY)
+//                                                    break;
+//                                            if (!slide[piece[i]])
+//                                                    break;
+//                                    }
+            }
+        }
+	return FALSE;
     }
 }
