@@ -66,7 +66,7 @@ abstract class BoardUtils
         $pieceString = "";
         switch ($piece)
         {
-            case Board::EMPTY_SQUARE: $pieceString = " "; break;
+            case Board::NULL: $pieceString = " "; break;
             case Board::WHITE_PAWN: $pieceString = "P"; break;
             case Board::WHITE_KNIGHT : $pieceString = "N"; break;
             case Board::WHITE_BISHOP: $pieceString = "B"; break;

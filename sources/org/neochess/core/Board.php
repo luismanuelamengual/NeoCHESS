@@ -4,30 +4,28 @@ namespace org\neochess\core;
 
 class Board
 {
-    const EMPTY_SQUARE = 0;
+    const WHITE = 0;
+    const BLACK = 1;
     
-    const WHITE = 1;
-    const BLACK = -1;
+    const PAWN = 0;
+    const KNIGHT = 1;
+    const BISHOP = 2;
+    const ROOK = 3;
+    const QUEEN = 4;
+    const KING = 5;
     
-    const PAWN = 1;
-    const KNIGHT = 2;
-    const BISHOP = 3;
-    const ROOK = 4;
-    const QUEEN = 5;
-    const KING = 6;
-    
-    const WHITE_PAWN = 1;
-    const WHITE_KNIGHT = 2;
-    const WHITE_BISHOP = 3;
-    const WHITE_ROOK = 4;
-    const WHITE_QUEEN = 5;
-    const WHITE_KING = 6;
-    const BLACK_PAWN = -1;
-    const BLACK_KNIGHT = -2;
-    const BLACK_BISHOP = -3;
-    const BLACK_ROOK = -4;
-    const BLACK_QUEEN = -5;
-    const BLACK_KING = -6;
+    const WHITE_PAWN = 0;
+    const WHITE_KNIGHT = 1;
+    const WHITE_BISHOP = 2;
+    const WHITE_ROOK = 3;
+    const WHITE_QUEEN = 4;
+    const WHITE_KING = 5;
+    const BLACK_PAWN = 6;
+    const BLACK_KNIGHT = 7;
+    const BLACK_BISHOP = 8;
+    const BLACK_ROOK = 9;
+    const BLACK_QUEEN = 10;
+    const BLACK_KING = 11;
     
     const RANK_1 = 0;
     const RANK_2 = 1;
@@ -149,6 +147,15 @@ class Board
         21, 22, 23, 24, 25, 26, 27, 28
     ];
     
+    private static $slide = [false, false, true, true, true, false];
+    private static $offsets = [
+        [],
+        [ -21, -19, -12,  -8,   8,  12,  19,  21 ],
+        [ -11,  -9,   9,  11],
+        [ -10,  -1,   1,  10],
+        [ -11, -10,  -9,  -1,   1,   9,  10,  11 ],
+        [ -11, -10,  -9,  -1,   1,   9,  10,  11 ]];
+    
     public function __construct ()
     {
         $this->clear();
@@ -157,38 +164,38 @@ class Board
     public function setInitialPosition ()
     {
         $this->clear();
-        $this->setPiece(self::A1, self::WHITE_ROOK);
-        $this->setPiece(self::H1, self::WHITE_ROOK);
-        $this->setPiece(self::B1, self::WHITE_KNIGHT);
-        $this->setPiece(self::G1, self::WHITE_KNIGHT);
-        $this->setPiece(self::C1, self::WHITE_BISHOP);
-        $this->setPiece(self::F1, self::WHITE_BISHOP);
-        $this->setPiece(self::D1, self::WHITE_QUEEN);
-        $this->setPiece(self::E1, self::WHITE_KING);
-        $this->setPiece(self::A2, self::WHITE_PAWN);
-        $this->setPiece(self::B2, self::WHITE_PAWN);
-        $this->setPiece(self::C2, self::WHITE_PAWN);
-        $this->setPiece(self::D2, self::WHITE_PAWN);
-        $this->setPiece(self::E2, self::WHITE_PAWN);
-        $this->setPiece(self::F2, self::WHITE_PAWN);
-        $this->setPiece(self::G2, self::WHITE_PAWN);
-        $this->setPiece(self::H2, self::WHITE_PAWN);
-        $this->setPiece(self::A8, self::BLACK_ROOK);
-        $this->setPiece(self::H8, self::BLACK_ROOK);
-        $this->setPiece(self::B8, self::BLACK_KNIGHT);
-        $this->setPiece(self::G8, self::BLACK_KNIGHT);
-        $this->setPiece(self::C8, self::BLACK_BISHOP);
-        $this->setPiece(self::F8, self::BLACK_BISHOP);
-        $this->setPiece(self::D8, self::BLACK_QUEEN);
-        $this->setPiece(self::E8, self::BLACK_KING);
-        $this->setPiece(self::A7, self::BLACK_PAWN);
-        $this->setPiece(self::B7, self::BLACK_PAWN);
-        $this->setPiece(self::C7, self::BLACK_PAWN);
-        $this->setPiece(self::D7, self::BLACK_PAWN);
-        $this->setPiece(self::E7, self::BLACK_PAWN);
-        $this->setPiece(self::F7, self::BLACK_PAWN);
-        $this->setPiece(self::G7, self::BLACK_PAWN);
-        $this->setPiece(self::H7, self::BLACK_PAWN);
+        $this->putPiece(self::A1, self::WHITE_ROOK);
+        $this->putPiece(self::H1, self::WHITE_ROOK);
+        $this->putPiece(self::B1, self::WHITE_KNIGHT);
+        $this->putPiece(self::G1, self::WHITE_KNIGHT);
+        $this->putPiece(self::C1, self::WHITE_BISHOP);
+        $this->putPiece(self::F1, self::WHITE_BISHOP);
+        $this->putPiece(self::D1, self::WHITE_QUEEN);
+        $this->putPiece(self::E1, self::WHITE_KING);
+        $this->putPiece(self::A2, self::WHITE_PAWN);
+        $this->putPiece(self::B2, self::WHITE_PAWN);
+        $this->putPiece(self::C2, self::WHITE_PAWN);
+        $this->putPiece(self::D2, self::WHITE_PAWN);
+        $this->putPiece(self::E2, self::WHITE_PAWN);
+        $this->putPiece(self::F2, self::WHITE_PAWN);
+        $this->putPiece(self::G2, self::WHITE_PAWN);
+        $this->putPiece(self::H2, self::WHITE_PAWN);
+        $this->putPiece(self::A8, self::BLACK_ROOK);
+        $this->putPiece(self::H8, self::BLACK_ROOK);
+        $this->putPiece(self::B8, self::BLACK_KNIGHT);
+        $this->putPiece(self::G8, self::BLACK_KNIGHT);
+        $this->putPiece(self::C8, self::BLACK_BISHOP);
+        $this->putPiece(self::F8, self::BLACK_BISHOP);
+        $this->putPiece(self::D8, self::BLACK_QUEEN);
+        $this->putPiece(self::E8, self::BLACK_KING);
+        $this->putPiece(self::A7, self::BLACK_PAWN);
+        $this->putPiece(self::B7, self::BLACK_PAWN);
+        $this->putPiece(self::C7, self::BLACK_PAWN);
+        $this->putPiece(self::D7, self::BLACK_PAWN);
+        $this->putPiece(self::E7, self::BLACK_PAWN);
+        $this->putPiece(self::F7, self::BLACK_PAWN);
+        $this->putPiece(self::G7, self::BLACK_PAWN);
+        $this->putPiece(self::H7, self::BLACK_PAWN);
         $this->castleState = self::WHITE_CASTLE_LONG | self::WHITE_CASTLE_SHORT | self::BLACK_CASTLE_LONG | self::BLACK_CASTLE_SHORT;
         $this->sideToMove = self::WHITE;
     }
@@ -197,7 +204,7 @@ class Board
     {
         $this->squares = [];
         for ($square = self::A1; $square <= self::H8; $square++)
-            $this->squares[$square] = self::EMPTY_SQUARE;
+            $this->squares[$square] = null;
         $this->epSquare = -1;
         $this->castleState = 0;
         $this->sideToMove = self::WHITE;
@@ -209,9 +216,14 @@ class Board
         return $this->squares[$square];
     }
     
-    public function setPiece ($square, $piece)
+    public function putPiece ($square, $piece)
     {
         $this->squares[$square] = $piece;
+    }
+    
+    public function removePiece ($square)
+    {
+        $this->squares[$square] == null;
     }
     
     public function getEpSquare ()
@@ -264,43 +276,97 @@ class Board
         return $square >> 3;
     }
     
+    private function getPieceSide ($piece)
+    {
+        return floor($piece / 6);
+    }
+    
+    private function getPieceFigure ($piece)
+    {
+        return $piece % 6;
+    }
+    
     public function isSquareAttacked ($square, $side)
     {
         for ($testSquare = self::A1; $testSquare <= self::H8; $testSquare++)
         {
             $piece = $this->squares[$testSquare];
-            
-            if (($piece > 0 && $side == self::WHITE) && ($piece < 0 && $side == self::BLACK)) 
+            $pieceSide = $this->getPieceSide($piece);
+            if ($side == $pieceSide)
             {
-//                    if (piece[i] == PAWN) {
-//                            if (s == LIGHT) {
-//                                    if (COL(i) != 0 && i - 9 == sq)
-//                                            return TRUE;
-//                                    if (COL(i) != 7 && i - 7 == sq)
-//                                            return TRUE;
-//                            }
-//                            else {
-//                                    if (COL(i) != 0 && i + 7 == sq)
-//                                            return TRUE;
-//                                    if (COL(i) != 7 && i + 9 == sq)
-//                                            return TRUE;
-//                            }
-//                    }
-//                    else
-//                            for (j = 0; j < offsets[piece[i]]; ++j)
-//                                    for (n = i;;) {
-//                                            n = mailbox[mailbox64[n] + offset[piece[i]][j]];
-//                                            if (n == -1)
-//                                                    break;
-//                                            if (n == sq)
-//                                                    return TRUE;
-//                                            if (color[n] != EMPTY)
-//                                                    break;
-//                                            if (!slide[piece[i]])
-//                                                    break;
-//                                    }
+                $pieceFigure = $this->getPieceFigure($piece);
+                if ($pieceFigure == self::PAWN)
+                {
+                    $pieceFile = self::getSquareFile($testSquare);
+                    if ($side == self::WHITE) 
+                    {
+                        if ($pieceFile != self::FILE_A && $testSquare + 7 == $square) return true;
+                        if ($pieceFile != self::FILE_H && $testSquare + 9 == $square) return true;
+                    }
+                    else 
+                    {
+                        if ($pieceFile != self::FILE_A && $testSquare - 9 == $square) return true;
+                        if ($pieceFile != self::FILE_H && $testSquare - 7 == $square) return true;
+                    }
+                }
+                else
+                {
+                    foreach (self::$offsets[$pieceFigure] as $offset)
+                    {
+                        $currentOffsetSquare = $testSquare;
+                        while (true)
+                        {
+                            $currentOffsetSquare = self::$mailbox[self::$mailbox64[$currentOffsetSquare] + $offset];
+                            if ($currentOffsetSquare == null)
+                                break;
+                            if ($currentOffsetSquare == $square)
+                                return true;
+                            if ($this->squares[$currentOffsetSquare] != null)
+                                break;
+                            if (!self::$slide[$pieceFigure])
+                                break;
+                        }
+                    }
+                }
             }
         }
-	return FALSE;
+	return false;
+    }
+    
+    public function makeMove (Move $move)
+    {
+        $fromSquare = $move->getFromSquare();
+        $toSquare = $move->getToSquare();
+        $movingPiece = $this->squares[$fromSquare];
+        $capturedPiece = $this->squares[$toSquare];
+        
+        $moveHistorySlot = new BoardHistorySlot($move);
+        $moveHistorySlot->setMovingPiece($movingPiece);
+        $moveHistorySlot->setCapturedPiece($capturedPiece);
+        $moveHistorySlot->setCastleState($this->castleState);
+        $moveHistorySlot->setEpSquare($this->epSquare);
+        $this->historySlots[] = $moveHistorySlot;
+        
+        $movingFigure = $this->getPieceFigure($movingPiece);
+        switch ($movingFigure)
+        {
+            case self::PAWN:
+                if ($this->sideToMove == self::WHITE)
+                {
+                    if ($this->getSquareRank($toSquare) == self::RANK_8)
+                        $movingPiece = self::WHITE_QUEEN;
+                    else if ($toSquare == $this->epSquare)
+                        $this->squares[$toSquare-8] = null;
+                }
+                else
+                {
+                    if ($this->getSquareRank($toSquare) == self::RANK_1)
+                        $movingPiece = self::BLACK_QUEEN;
+                    else if ($toSquare == $this->epSquare)
+                        $this->squares[$toSquare+8] = null;
+                }
+//                epSquare = (Math.abs(initialSquare - endSquare) == 16)? (byte)((initialSquare + endSquare) / 2) : INVALIDSQUARE;
+                break;
+        }
     }
 }

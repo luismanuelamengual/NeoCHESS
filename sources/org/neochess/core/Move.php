@@ -6,6 +6,7 @@ class Move
 {
     private $fromSquare;
     private $toSquare;
+    private $promotionPiece;
     
     public function __construct($fromSquare, $toSquare)
     {
@@ -31,5 +32,15 @@ class Move
     public function setToSquare($toSquare)
     {
         $this->toSquare = $toSquare;
+    }
+    
+    public function getPromotionPiece()
+    {
+        return $this->promotionPiece;
+    }
+
+    public function setPromotionPiece($promotionPiece)
+    {
+        $this->promotionPiece = $promotionPiece;
     }
 }

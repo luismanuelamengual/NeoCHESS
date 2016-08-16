@@ -5,6 +5,7 @@ namespace org\neochess\core;
 class BoardHistorySlot
 {
     private $move;
+    private $movingPiece;
     private $capturedPiece;
     private $epSquare;
     private $castleState;
@@ -12,6 +13,16 @@ class BoardHistorySlot
     public function __construct(Move $move)
     {
         $this->move = $move;
+    }
+    
+    public function getMovingPiece()
+    {
+        return $this->movingPiece;
+    }
+
+    public function setMovingPiece($movingPiece)
+    {
+        $this->movingPiece = $movingPiece;
     }
 
     public function getMove()
