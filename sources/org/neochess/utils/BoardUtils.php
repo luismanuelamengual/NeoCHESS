@@ -64,21 +64,27 @@ abstract class BoardUtils
     public static function getBoardPiece ($piece)
     {
         $pieceString = "";
-        switch ($piece)
+        if ($piece === null) 
         {
-            case Board::NULL: $pieceString = " "; break;
-            case Board::WHITE_PAWN: $pieceString = "P"; break;
-            case Board::WHITE_KNIGHT : $pieceString = "N"; break;
-            case Board::WHITE_BISHOP: $pieceString = "B"; break;
-            case Board::WHITE_ROOK: $pieceString = "R"; break;
-            case Board::WHITE_QUEEN: $pieceString = "Q"; break;
-            case Board::WHITE_KING: $pieceString = "K"; break;
-            case Board::BLACK_PAWN: $pieceString = "p"; break;
-            case Board::BLACK_KNIGHT : $pieceString = "n"; break;
-            case Board::BLACK_BISHOP: $pieceString = "b"; break;
-            case Board::BLACK_ROOK: $pieceString = "r"; break;
-            case Board::BLACK_QUEEN: $pieceString = "q"; break;
-            case Board::BLACK_KING: $pieceString = "k"; break;
+            $pieceString = " ";
+        }
+        else
+        {
+            switch ($piece)
+            {
+                case Board::WHITE_PAWN: $pieceString = "P"; break;
+                case Board::WHITE_KNIGHT : $pieceString = "N"; break;
+                case Board::WHITE_BISHOP: $pieceString = "B"; break;
+                case Board::WHITE_ROOK: $pieceString = "R"; break;
+                case Board::WHITE_QUEEN: $pieceString = "Q"; break;
+                case Board::WHITE_KING: $pieceString = "K"; break;
+                case Board::BLACK_PAWN: $pieceString = "p"; break;
+                case Board::BLACK_KNIGHT : $pieceString = "n"; break;
+                case Board::BLACK_BISHOP: $pieceString = "b"; break;
+                case Board::BLACK_ROOK: $pieceString = "r"; break;
+                case Board::BLACK_QUEEN: $pieceString = "q"; break;
+                case Board::BLACK_KING: $pieceString = "k"; break;
+            }
         }
         return $pieceString;
     }

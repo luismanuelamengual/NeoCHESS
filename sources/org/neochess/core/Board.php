@@ -156,6 +156,17 @@ class Board
         [ -11, -10,  -9,  -1,   1,   9,  10,  11 ],
         [ -11, -10,  -9,  -1,   1,   9,  10,  11 ]];
     
+    private static $castleMask = [
+        13, 15, 15, 15, 12, 15, 15, 14,
+	15, 15, 15, 15, 15, 15, 15, 15,
+	15, 15, 15, 15, 15, 15, 15, 15,
+	15, 15, 15, 15, 15, 15, 15, 15,
+	15, 15, 15, 15, 15, 15, 15, 15,
+	15, 15, 15, 15, 15, 15, 15, 15,
+	15, 15, 15, 15, 15, 15, 15, 15,
+	 7, 15, 15, 15,  3, 15, 15, 11
+    ];
+    
     public function __construct ()
     {
         $this->clear();
@@ -223,7 +234,7 @@ class Board
     
     public function removePiece ($square)
     {
-        $this->squares[$square] == null;
+        $this->squares[$square] = null;
     }
     
     public function getEpSquare ()
@@ -284,6 +295,23 @@ class Board
     private function getPieceFigure ($piece)
     {
         return $piece % 6;
+    }
+    
+    public static function getRankFromString ($rankString)
+    {
+        return intval($rankString) - 1;
+    }
+    
+    public static function getFileFromString ($fileString)
+    {
+        return ord($fileString) - 97;
+    }
+    
+    public static function getSquareFromString ($squareString)
+    {
+        $file = self::getFileFromString($squareString{0});
+        $rank = self::getRankFromString($squareString{1});
+        return self::getSquare($file, $rank);
     }
     
     public function isSquareAttacked ($square, $side)
@@ -348,25 +376,73 @@ class Board
         $this->historySlots[] = $moveHistorySlot;
         
         $movingFigure = $this->getPieceFigure($movingPiece);
-        switch ($movingFigure)
+        if ($movingFigure == self::PAWN)
         {
-            case self::PAWN:
-                if ($this->sideToMove == self::WHITE)
+            if ($this->sideToMove == self::WHITE)
+            {
+                if ($toSquare == $this->epSquare)
                 {
-                    if ($this->getSquareRank($toSquare) == self::RANK_8)
-                        $movingPiece = self::WHITE_QUEEN;
-                    else if ($toSquare == $this->epSquare)
-                        $this->squares[$toSquare-8] = null;
+                    $this->squares[$toSquare-8] = null;
                 }
-                else
+                else if ($this->getSquareRank($toSquare) == self::RANK_8)
                 {
-                    if ($this->getSquareRank($toSquare) == self::RANK_1)
-                        $movingPiece = self::BLACK_QUEEN;
-                    else if ($toSquare == $this->epSquare)
-                        $this->squares[$toSquare+8] = null;
+                    $promotionPiece = $move->getPromotionPiece();
+                    $movingPiece = $promotionPiece != null? $promotionPiece : self::WHITE_QUEEN;
                 }
-//                epSquare = (Math.abs(initialSquare - endSquare) == 16)? (byte)((initialSquare + endSquare) / 2) : INVALIDSQUARE;
-                break;
+            }
+            else
+            {       
+                if ($toSquare == $this->epSquare)
+                {
+                    $this->squares[$toSquare+8] = null;
+                }
+                else if ($this->getSquareRank($toSquare) == self::RANK_1)
+                {
+                    $promotionPiece = $move->getPromotionPiece();
+                    $movingPiece = $promotionPiece != null? $promotionPiece : self::BLACK_QUEEN;
+                }
+            }
+            $this->epSquare = (abs($fromSquare - $toSquare) == 16)? (($fromSquare + $toSquare) / 2) : null;
         }
+        else
+        {
+            if ($movingFigure == self::KING)
+            {
+                if ($fromSquare == self::E1)
+                {
+                    switch ($toSquare)
+                    {
+                        case self::G1:
+                            $this->removePiece(self::H1);
+                            $this->putPiece(self::F1, self::WHITE_ROOK);
+                            break;
+                        case self::C1:
+                            $this->removePiece(self::A1);
+                            $this->putPiece(self::D1, self::WHITEROOK);
+                            break;
+                    }
+                }
+                else if ($fromSquare == self::E8)
+                {
+                    switch ($toSquare)
+                    {
+                        case self::G8:
+                            $this->removePiece(self::H8);
+                            $this->putPiece(self::F8, self::BLACKROOK);
+                            break;
+                        case self::C8:
+                            $this->removePiece(self::A8);
+                            $this->putPiece(self::D8, self::BLACK_ROOK);
+                            break;
+                    }
+                }
+            }
+            $this->epSquare = null;
+        }
+        
+        $this->removePiece($fromSquare);
+        $this->putPiece($toSquare, $movingPiece);
+        $this->castleState &= self::$castleMask[$fromSquare] & self::$castleMask[$toSquare];
+        $this->sideToMove = 1 ^ $this->sideToMove;
     }
 }
