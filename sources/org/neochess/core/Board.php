@@ -445,4 +445,67 @@ class Board
         $this->castleState &= self::$castleMask[$fromSquare] & self::$castleMask[$toSquare];
         $this->sideToMove = 1 ^ $this->sideToMove;
     }
+    
+    public function unmakeMove ()
+    {
+        $lastHistorySlot = array_pop($this->historySlots); /* @var $lastHistorySlot BoardHistorySlot */
+        $fromSquare = $lastHistorySlot->getMove()->getFromSquare();
+        $toSquare = $lastHistorySlot->getMove()->getToSquare();
+        $movingPiece = $lastHistorySlot->getMovingPiece();
+        $capturedPiece = $lastHistorySlot->getCapturedPiece();
+        $movingFigure = $this->getPieceFigure($movingPiece);
+        $movingSide = $this->getPieceSide($movingPiece);
+        $lastCastleState = $lastHistorySlot->getCastleState();
+        $lastEpSquare = $lastHistorySlot->getEpSquare();
+        
+        if ($movingFigure == self::PAWN)
+        {
+            if ($toSquare == $lastEpSquare)
+            {
+                if ($movingSide == self::WHITE)
+                    $this->putPiece($toSquare-8, self::BLACK_PAWN);
+                else
+                    $this->putPiece($toSquare+8, self::WHITE_PAWN);
+            }
+        }
+        else if ($movingFigure == self::KING)
+        {
+            if ($fromSquare == self::E1)
+            {
+                switch ($toSquare)
+                {
+                    case self::G1:
+                        $this->removePiece(self::F1);
+                        $this->putPiece(self::H1, self::WHITE_ROOK);
+                        break;
+                    case self::C1:
+                        $this->removePiece(D1);
+                        $this->putPiece(self::A1, self::WHITE_ROOK);
+                        break;
+                }
+            }
+            else if ($fromSquare == self::E8)
+            {
+                switch ($toSquare)
+                {
+                    case self::G8:
+                        $this->removePiece(self::F8);
+                        $this->putPiece(self::H8, self::BLACK_ROOK);
+                        break;
+                    case self::C8:
+                        $this->removePiece(self::D8);
+                        $this->putPiece(self::A8, self::BLACK_ROOK);
+                        break;
+                }
+            }
+        }
+        if ($capturedPiece !== null)
+            $this->putPiece($toSquare, $capturedPiece);
+        else
+            $this->removePiece($toSquare);
+        $this->putPiece($fromSquare, $movingPiece);
+        $this->epSquare = $lastEpSquare;
+        $this->castleState = $lastCastleState;
+        $this->sideToMove = 1 ^ $this->sideToMove;
+    }
 }
