@@ -28,10 +28,19 @@ class BoardCommandExecutor extends ConsoleCommandExecutor
                 $this->board->setInitialPosition();
                 break;
             case "move":
-                $fromSquare = BoardUtils::getSquareFromString($parameters[0]);
-                $toSquare = BoardUtils::getSquareFromString($parameters[1]);
+                $moveString = $parameters[0];
+                $fromSquare = BoardUtils::getSquareFromString(substr($moveString, 0, 2));
+                $toSquare = BoardUtils::getSquareFromString(substr($moveString, 2));
                 $move = new Move($fromSquare, $toSquare);
                 $this->board->makeMove($move);
+                break;
+            case "gen":
+                $moves = $this->board->getPseudoLegalMoves();
+                foreach ($moves as $move) 
+                {
+                    echo BoardUtils::getSquareString($move->getFromSquare()) . BoardUtils::getSquareString($move->getToSquare()) . " ";
+                }
+                echo "\n";
                 break;
         }
     }

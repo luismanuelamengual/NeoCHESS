@@ -63,19 +63,14 @@ abstract class BoardUtils
     
     public static function getFileString ($file)
     {
-        $fileString = "";
-        switch ($file)
-        {
-            case Board::FILE_A: $fileString = "A"; break;
-            case Board::FILE_B: $fileString = "B"; break;
-            case Board::FILE_C: $fileString = "C"; break;
-            case Board::FILE_D: $fileString = "D"; break;
-            case Board::FILE_E: $fileString = "E"; break;
-            case Board::FILE_F: $fileString = "F"; break;
-            case Board::FILE_G: $fileString = "G"; break;
-            case Board::FILE_H: $fileString = "H"; break;
-        }
-        return $fileString;
+        return chr($file + 97);
+    }
+    
+    public static function getSquareString ($square)
+    {
+        $file = Board::getSquareFile($square);
+        $rank = Board::getSquareRank($square);
+        return self::getFileString($file) . self::getRankString($rank);
     }
     
     public static function getPieceString ($piece)

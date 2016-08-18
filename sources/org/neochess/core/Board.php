@@ -502,13 +502,13 @@ class Board
         {
             $piece = $this->squares[$testSquare];
             $pieceSide = $this->getPieceSide($piece);
-            if ($side == $pieceSide)
+            if ($this->sideToMove == $pieceSide)
             {
                 $pieceFigure = $this->getPieceFigure($piece);
                 if ($pieceFigure == self::PAWN)
                 {
                     $pieceFile = self::getSquareFile($testSquare);
-                    if ($side == self::WHITE) 
+                    if ($this->sideToMove == self::WHITE) 
                     {
                         if ($pieceFile != self::FILE_A && $this->getPieceSide($this->squares[$testSquare + 7]) == self::BLACK) 
                             $moves[] = new Move($testSquare, $testSquare + 7);
@@ -567,9 +567,9 @@ class Board
 
         if ($this->sideToMove == self::WHITE)
         {
-            if ($this->castleState & self::WHITE_CASTLE_SHORT)
+            if ($this->castleState & self::WHITE_CASTLE_SHORT && $this->squares[self::F1] == self::NULL && $this->squares[self::G1] == self::NULL)
                 $moves[] = new Move(self::E1, self::G1);
-            if ($this->castleState & self::WHITE_CASTLE_LONG)
+            if ($this->castleState & self::WHITE_CASTLE_LONG && $this->squares[self::D1] == self::NULL && $this->squares[self::C1] == self::NULL && $this->squares[self::B1] == self::NULL)
                 $moves[] = new Move(self::E1, self::C1);
             
             if ($this->epSquare != self::NULL)
@@ -583,9 +583,9 @@ class Board
         }
         else
         {
-            if ($this->castleState & self::BLACK_CASTLE_SHORT)
+            if ($this->castleState & self::BLACK_CASTLE_SHORT && $this->squares[self::F8] == self::NULL && $this->squares[self::G8] == self::NULL)
                 $moves[] = new Move(self::E8, self::G8);
-            if ($this->castleState & self::BLACK_CASTLE_LONG)
+            if ($this->castleState & self::BLACK_CASTLE_LONG && $this->squares[self::D8] == self::NULL && $this->squares[self::C8] == self::NULL && $this->squares[self::B8] == self::NULL)
                 $moves[] = new Move(self::E8, self::C8);
             
             if ($this->epSquare != self::NULL)
