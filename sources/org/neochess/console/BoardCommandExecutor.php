@@ -28,8 +28,8 @@ class BoardCommandExecutor extends ConsoleCommandExecutor
                 $this->board->setInitialPosition();
                 break;
             case "move":
-                $fromSquare = Board::getSquareFromString($parameters[0]);
-                $toSquare = Board::getSquareFromString($parameters[1]);
+                $fromSquare = BoardUtils::getSquareFromString($parameters[0]);
+                $toSquare = BoardUtils::getSquareFromString($parameters[1]);
                 $move = new Move($fromSquare, $toSquare);
                 $this->board->makeMove($move);
                 break;

@@ -4,6 +4,8 @@ namespace org\neochess\core;
 
 class Board
 {
+    const NULL = -1;
+    
     const WHITE = 0;
     const BLACK = 1;
     
@@ -215,8 +217,8 @@ class Board
     {
         $this->squares = [];
         for ($square = self::A1; $square <= self::H8; $square++)
-            $this->squares[$square] = null;
-        $this->epSquare = -1;
+            $this->removePiece($square);
+        $this->epSquare = self::NULL;
         $this->castleState = 0;
         $this->sideToMove = self::WHITE;
         $this->historySlots = [];
@@ -234,7 +236,7 @@ class Board
     
     public function removePiece ($square)
     {
-        $this->squares[$square] = null;
+        $this->squares[$square] = self::NULL;
     }
     
     public function getEpSquare ()
@@ -297,23 +299,6 @@ class Board
         return $piece % 6;
     }
     
-    public static function getRankFromString ($rankString)
-    {
-        return intval($rankString) - 1;
-    }
-    
-    public static function getFileFromString ($fileString)
-    {
-        return ord($fileString) - 97;
-    }
-    
-    public static function getSquareFromString ($squareString)
-    {
-        $file = self::getFileFromString($squareString{0});
-        $rank = self::getRankFromString($squareString{1});
-        return self::getSquare($file, $rank);
-    }
-    
     public function isSquareAttacked ($square, $side)
     {
         for ($testSquare = self::A1; $testSquare <= self::H8; $testSquare++)
@@ -345,11 +330,11 @@ class Board
                         while (true)
                         {
                             $currentOffsetSquare = self::$mailbox[self::$mailbox64[$currentOffsetSquare] + $offset];
-                            if ($currentOffsetSquare == null)
+                            if ($currentOffsetSquare == self::NULL)
                                 break;
                             if ($currentOffsetSquare == $square)
                                 return true;
-                            if ($this->squares[$currentOffsetSquare] != null)
+                            if ($this->squares[$currentOffsetSquare] != self::NULL)
                                 break;
                             if (!self::$slide[$pieceFigure])
                                 break;
@@ -382,7 +367,7 @@ class Board
             {
                 if ($toSquare == $this->epSquare)
                 {
-                    $this->squares[$toSquare-8] = null;
+                    $this->removePiece($toSquare-8);
                 }
                 else if ($this->getSquareRank($toSquare) == self::RANK_8)
                 {
@@ -394,7 +379,7 @@ class Board
             {       
                 if ($toSquare == $this->epSquare)
                 {
-                    $this->squares[$toSquare+8] = null;
+                    $this->removePiece($toSquare+8);
                 }
                 else if ($this->getSquareRank($toSquare) == self::RANK_1)
                 {
@@ -507,5 +492,112 @@ class Board
         $this->epSquare = $lastEpSquare;
         $this->castleState = $lastCastleState;
         $this->sideToMove = 1 ^ $this->sideToMove;
+    }
+    
+    public function getPseudoLegalMoves ()
+    {
+        $oppositeSide = 1 ^ $this->sideToMove;
+        $moves = [];
+        for ($testSquare = self::A1; $testSquare <= self::H8; $testSquare++)
+        {
+            $piece = $this->squares[$testSquare];
+            $pieceSide = $this->getPieceSide($piece);
+            if ($side == $pieceSide)
+            {
+                $pieceFigure = $this->getPieceFigure($piece);
+                if ($pieceFigure == self::PAWN)
+                {
+                    $pieceFile = self::getSquareFile($testSquare);
+                    if ($side == self::WHITE) 
+                    {
+                        if ($pieceFile != self::FILE_A && $this->getPieceSide($this->squares[$testSquare + 7]) == self::BLACK) 
+                            $moves[] = new Move($testSquare, $testSquare + 7);
+                        if ($pieceFile != self::FILE_H && $this->getPieceSide($this->squares[$testSquare + 9]) == self::BLACK) 
+                            $moves[] = new Move($testSquare, $testSquare + 9);
+                        
+                        if ($this->squares[$testSquare + 8] == self::NULL)
+                        {
+                            $moves[] = new Move($testSquare, $testSquare + 8);
+                            if ($this->getSquareRank($testSquare) == self::RANK_2 && $this->squares[$testSquare + 16] == self::NULL)
+                                $moves[] = new Move($testSquare, $testSquare + 16);
+                        }
+                    }
+                    else 
+                    {
+                        if ($pieceFile != self::FILE_A && $this->getPieceSide($this->squares[$testSquare - 9]) == self::WHITE) 
+                            $moves[] = new Move($testSquare, $testSquare - 9);
+                        if ($pieceFile != self::FILE_H && $this->getPieceSide($this->squares[$testSquare - 7]) == self::WHITE) 
+                            $moves[] = new Move($testSquare, $testSquare - 7);
+                        
+                        if ($this->squares[$testSquare - 8] == self::NULL)
+                        {
+                            $moves[] = new Move($testSquare, $testSquare - 8);
+                            if ($this->getSquareRank($testSquare) == self::RANK_7 && $this->squares[$testSquare - 16] == self::NULL)
+                                $moves[] = new Move($testSquare, $testSquare - 16);
+                        }
+                    }
+                } 
+                else
+                {
+                    foreach (self::$offsets[$pieceFigure] as $offset)
+                    {
+                        $currentOffsetSquare = $testSquare;
+                        while (true)
+                        {
+                            $currentOffsetSquare = self::$mailbox[self::$mailbox64[$currentOffsetSquare] + $offset];
+                            if ($currentOffsetSquare == self::NULL)
+                                break;
+                            
+                            if ($this->squares[$currentOffsetSquare] != self::NULL)
+                            {
+                                if ($this->getPieceSide($this->squares[$currentOffsetSquare]) == $oppositeSide)
+                                {
+                                    $moves[] = new Move($testSquare, $currentOffsetSquare);
+                                }
+                                break;
+                            }
+                            $moves[] = new Move($testSquare, $currentOffsetSquare);
+                            if (!self::$slide[$pieceFigure])
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+
+        if ($this->sideToMove == self::WHITE)
+        {
+            if ($this->castleState & self::WHITE_CASTLE_SHORT)
+                $moves[] = new Move(self::E1, self::G1);
+            if ($this->castleState & self::WHITE_CASTLE_LONG)
+                $moves[] = new Move(self::E1, self::C1);
+            
+            if ($this->epSquare != self::NULL)
+            {
+                $epSquareFile = $this->getSquareFile($this->epSquare);
+                if ($epSquareFile != self::FILE_A && $this->getPiece($epSquareFile - 9) == self::WHITE_PAWN)
+                    $moves[] = new Move($epSquareFile - 9, $epSquareFile);
+                if ($epSquareFile != self::FILE_H && $this->getPiece($epSquareFile - 7) == self::WHITE_PAWN)
+                    $moves[] = new Move($epSquareFile - 7, $epSquareFile);
+            }
+        }
+        else
+        {
+            if ($this->castleState & self::BLACK_CASTLE_SHORT)
+                $moves[] = new Move(self::E8, self::G8);
+            if ($this->castleState & self::BLACK_CASTLE_LONG)
+                $moves[] = new Move(self::E8, self::C8);
+            
+            if ($this->epSquare != self::NULL)
+            {
+                $epSquareFile = $this->getSquareFile($this->epSquare);
+                if ($epSquareFile != self::FILE_A && $this->getPiece($epSquareFile + 7) == self::BLACK_PAWN)
+                    $moves[] = new Move($epSquareFile + 7, $epSquareFile);
+                if ($epSquareFile != self::FILE_H && $this->getPiece($epSquareFile + 9) == self::BLACK_PAWN)
+                    $moves[] = new Move($epSquareFile + 9, $epSquareFile);
+            }
+        }
+
+        return $moves;
     }
 }
