@@ -433,7 +433,7 @@ class Board
     
     public function unmakeMove ()
     {
-        $lastHistorySlot = array_pop($this->historySlots); /* @var $lastHistorySlot BoardHistorySlot */
+        $lastHistorySlot = array_pop($this->historySlots);
         $fromSquare = $lastHistorySlot->getMove()->getFromSquare();
         $toSquare = $lastHistorySlot->getMove()->getToSquare();
         $movingPiece = $lastHistorySlot->getMovingPiece();

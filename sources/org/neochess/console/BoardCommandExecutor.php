@@ -11,6 +11,7 @@ use org\neochess\utils\BoardUtils;
 class BoardCommandExecutor extends ConsoleCommandExecutor
 {
     private $board;
+    private $flipped = false;
     
     public function __construct()
     {
@@ -22,13 +23,19 @@ class BoardCommandExecutor extends ConsoleCommandExecutor
         switch ($command)
         {
             case "show":
-                BoardUtils::printBoard($this->board);
+                BoardUtils::printBoard($this->board, $this->flipped);
                 break;
             case "init":
                 $this->board->setInitialPosition();
                 break;
+            case "flip":
+                $this->flipped = !$this->flipped;
+                break;
             case "move":
                 $this->makeMove($parameters[0]);
+                break;
+            case "takeback":
+                $this->unmakeMove();
                 break;
             case "gen":
                 $this->printMoves();
@@ -48,6 +55,11 @@ class BoardCommandExecutor extends ConsoleCommandExecutor
             $move = new Move($fromSquare, $toSquare);
             $this->board->makeMove($move);
         }
+    }
+    
+    private function unmakeMove ()
+    {
+        $this->board->unmakeMove();
     }
     
     private function printMoves ()
