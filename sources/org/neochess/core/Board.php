@@ -372,7 +372,7 @@ class Board
                 else if ($this->getSquareRank($toSquare) == self::RANK_8)
                 {
                     $promotionPiece = $move->getPromotionPiece();
-                    $movingPiece = $promotionPiece != null? $promotionPiece : self::WHITE_QUEEN;
+                    $movingPiece = $promotionPiece != self::NULL? $promotionPiece : self::WHITE_QUEEN;
                 }
             }
             else
@@ -387,7 +387,7 @@ class Board
                     $movingPiece = $promotionPiece != null? $promotionPiece : self::BLACK_QUEEN;
                 }
             }
-            $this->epSquare = (abs($fromSquare - $toSquare) == 16)? (($fromSquare + $toSquare) / 2) : null;
+            $this->epSquare = (abs($fromSquare - $toSquare) == 16)? (($fromSquare + $toSquare) / 2) : self::NULL;
         }
         else
         {
@@ -422,7 +422,7 @@ class Board
                     }
                 }
             }
-            $this->epSquare = null;
+            $this->epSquare = self::NULL;
         }
         
         $this->removePiece($fromSquare);
@@ -551,9 +551,7 @@ class Board
                             if ($this->squares[$currentOffsetSquare] != self::NULL)
                             {
                                 if ($this->getPieceSide($this->squares[$currentOffsetSquare]) == $oppositeSide)
-                                {
                                     $moves[] = new Move($testSquare, $currentOffsetSquare);
-                                }
                                 break;
                             }
                             $moves[] = new Move($testSquare, $currentOffsetSquare);
@@ -564,7 +562,7 @@ class Board
                 }
             }
         }
-
+        
         if ($this->sideToMove == self::WHITE)
         {
             if ($this->castleState & self::WHITE_CASTLE_SHORT && $this->squares[self::F1] == self::NULL && $this->squares[self::G1] == self::NULL)
@@ -575,10 +573,10 @@ class Board
             if ($this->epSquare != self::NULL)
             {
                 $epSquareFile = $this->getSquareFile($this->epSquare);
-                if ($epSquareFile != self::FILE_A && $this->getPiece($epSquareFile - 9) == self::WHITE_PAWN)
-                    $moves[] = new Move($epSquareFile - 9, $epSquareFile);
-                if ($epSquareFile != self::FILE_H && $this->getPiece($epSquareFile - 7) == self::WHITE_PAWN)
-                    $moves[] = new Move($epSquareFile - 7, $epSquareFile);
+                if ($epSquareFile != self::FILE_A && $this->getPiece($this->epSquare - 9) == self::WHITE_PAWN)
+                    $moves[] = new Move($this->epSquare - 9, $this->epSquare);
+                if ($epSquareFile != self::FILE_H && $this->getPiece($this->epSquare - 7) == self::WHITE_PAWN)
+                    $moves[] = new Move($this->epSquare - 7, $this->epSquare);
             }
         }
         else
@@ -591,10 +589,10 @@ class Board
             if ($this->epSquare != self::NULL)
             {
                 $epSquareFile = $this->getSquareFile($this->epSquare);
-                if ($epSquareFile != self::FILE_A && $this->getPiece($epSquareFile + 7) == self::BLACK_PAWN)
-                    $moves[] = new Move($epSquareFile + 7, $epSquareFile);
-                if ($epSquareFile != self::FILE_H && $this->getPiece($epSquareFile + 9) == self::BLACK_PAWN)
-                    $moves[] = new Move($epSquareFile + 9, $epSquareFile);
+                if ($epSquareFile != self::FILE_A && $this->getPiece($this->epSquare + 7) == self::BLACK_PAWN)
+                    $moves[] = new Move($this->epSquare + 7, $this->epSquare);
+                if ($epSquareFile != self::FILE_H && $this->getPiece($this->epSquare + 9) == self::BLACK_PAWN)
+                    $moves[] = new Move($this->epSquare + 9, $this->epSquare);
             }
         }
 

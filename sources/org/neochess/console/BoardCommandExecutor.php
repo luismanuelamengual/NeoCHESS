@@ -28,20 +28,35 @@ class BoardCommandExecutor extends ConsoleCommandExecutor
                 $this->board->setInitialPosition();
                 break;
             case "move":
-                $moveString = $parameters[0];
-                $fromSquare = BoardUtils::getSquareFromString(substr($moveString, 0, 2));
-                $toSquare = BoardUtils::getSquareFromString(substr($moveString, 2));
-                $move = new Move($fromSquare, $toSquare);
-                $this->board->makeMove($move);
+                $this->makeMove($parameters[0]);
                 break;
             case "gen":
-                $moves = $this->board->getPseudoLegalMoves();
-                foreach ($moves as $move) 
-                {
-                    echo BoardUtils::getSquareString($move->getFromSquare()) . BoardUtils::getSquareString($move->getToSquare()) . " ";
-                }
-                echo "\n";
+                $this->printMoves();
+                break;
+            default:
+                $this->makeMove($command);
                 break;
         }
+    }
+    
+    private function makeMove ($moveString)
+    {
+        if (preg_match("/[a-h][1-8][a-h][1-8]/", $moveString)) 
+        {
+            $fromSquare = BoardUtils::getSquareFromString(substr($moveString, 0, 2));
+            $toSquare = BoardUtils::getSquareFromString(substr($moveString, 2));
+            $move = new Move($fromSquare, $toSquare);
+            $this->board->makeMove($move);
+        }
+    }
+    
+    private function printMoves ()
+    {
+        $moves = $this->board->getPseudoLegalMoves();
+        foreach ($moves as $move) 
+        {
+            echo BoardUtils::getSquareString($move->getFromSquare()) . BoardUtils::getSquareString($move->getToSquare()) . " ";
+        }
+        echo "\n";
     }
 }
