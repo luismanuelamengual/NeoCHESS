@@ -299,6 +299,23 @@ class Board
         return $piece % 6;
     }
     
+    public function inCheck ($side=null)
+    {
+        $inCheck = false;
+        if ($side == null)
+            $side = $this->sideToMove;
+        $sideKingPiece = $side == self::WHITE? self::WHITE_KING : self::BLACK_KING;
+        for ($testSquare = self::A1; $testSquare <= self::H8; $testSquare++)
+        {
+            if ($this->squares[$testSquare] == $sideKingPiece)
+            {
+                $inCheck = $this->isSquareAttacked($testSquare, 1 ^ $side);
+                break;
+            }
+        }
+        return $inCheck;
+    }
+    
     public function isSquareAttacked ($square, $side)
     {
         for ($testSquare = self::A1; $testSquare <= self::H8; $testSquare++)
@@ -492,6 +509,20 @@ class Board
         $this->epSquare = $lastEpSquare;
         $this->castleState = $lastCastleState;
         $this->sideToMove = 1 ^ $this->sideToMove;
+    }
+    
+    public function getLegalMoves ()
+    {
+        $moves = $this->getPseudoLegalMoves();
+        for ($i = sizeof($moves) - 1; $i >= 0; $i--)
+        {
+            $move = $moves[$i];
+            $this->makeMove($move);
+            if ($this->inCheck(1 ^ $this->sideToMove))
+                unset($moves[$i]);
+            $this->unmakeMove();
+        }
+        return $moves;
     }
     
     public function getPseudoLegalMoves ()

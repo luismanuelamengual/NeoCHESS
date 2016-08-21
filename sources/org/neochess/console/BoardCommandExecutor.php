@@ -64,7 +64,7 @@ class BoardCommandExecutor extends ConsoleCommandExecutor
     
     private function printMoves ()
     {
-        $moves = $this->board->getPseudoLegalMoves();
+        $moves = $this->board->getLegalMoves();
         foreach ($moves as $move) 
         {
             echo BoardUtils::getSquareString($move->getFromSquare()) . BoardUtils::getSquareString($move->getToSquare()) . " ";
