@@ -302,7 +302,7 @@ class Board
     public function inCheck ($side=null)
     {
         $inCheck = false;
-        if ($side == null)
+        if ($side === null)
             $side = $this->sideToMove;
         $sideKingPiece = $side == self::WHITE? self::WHITE_KING : self::BLACK_KING;
         for ($testSquare = self::A1; $testSquare <= self::H8; $testSquare++)
@@ -511,18 +511,34 @@ class Board
         $this->sideToMove = 1 ^ $this->sideToMove;
     }
     
+    public function isMoveLegal (Move $move)   
+    {
+        $isLegal = false;
+        $legalMoves = $this->getLegalMoves();
+        foreach ($legalMoves as $legalMove)
+        {
+            if ($move->getFromSquare() == $legalMove->getFromSquare() && $move->getToSquare() == $legalMove->getToSquare())
+            {
+                $isLegal = true;
+                break;
+            }
+        }
+        return $isLegal;
+    }
+    
     public function getLegalMoves ()
     {
+        $sideToMove = $this->sideToMove;
         $moves = $this->getPseudoLegalMoves();
         for ($i = sizeof($moves) - 1; $i >= 0; $i--)
         {
             $move = $moves[$i];
             $this->makeMove($move);
-            if ($this->inCheck(1 ^ $this->sideToMove))
+            if ($this->inCheck($sideToMove))
                 unset($moves[$i]);
             $this->unmakeMove();
         }
-        return $moves;
+        return array_values($moves);
     }
     
     public function getPseudoLegalMoves ()

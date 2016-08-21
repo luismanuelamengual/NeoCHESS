@@ -53,7 +53,8 @@ class BoardCommandExecutor extends ConsoleCommandExecutor
             $fromSquare = BoardUtils::getSquareFromString(substr($moveString, 0, 2));
             $toSquare = BoardUtils::getSquareFromString(substr($moveString, 2));
             $move = new Move($fromSquare, $toSquare);
-            $this->board->makeMove($move);
+            if ($this->board->isMoveLegal($move))
+                $this->board->makeMove($move);
         }
     }
     
