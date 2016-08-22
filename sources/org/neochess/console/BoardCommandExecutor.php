@@ -6,7 +6,6 @@ use NeoPHP\console\ConsoleApplication;
 use NeoPHP\console\ConsoleCommandExecutor;
 use org\neochess\core\Board;
 use org\neochess\core\Move;
-use org\neochess\utils\BoardUtils;
 
 class BoardCommandExecutor extends ConsoleCommandExecutor
 {
@@ -23,7 +22,7 @@ class BoardCommandExecutor extends ConsoleCommandExecutor
         switch ($command)
         {
             case "show":
-                BoardUtils::printBoard($this->board, $this->flipped);
+                $this->printBoard();
                 break;
             case "init":
                 $this->board->setInitialPosition();
@@ -50,8 +49,8 @@ class BoardCommandExecutor extends ConsoleCommandExecutor
     {
         if (preg_match("/[a-h][1-8][a-h][1-8]/", $moveString)) 
         {
-            $fromSquare = BoardUtils::getSquareFromString(substr($moveString, 0, 2));
-            $toSquare = BoardUtils::getSquareFromString(substr($moveString, 2));
+            $fromSquare = Board::getSquareFromString(substr($moveString, 0, 2));
+            $toSquare = Board::getSquareFromString(substr($moveString, 2));
             $move = new Move($fromSquare, $toSquare);
             if ($this->board->isMoveLegal($move))
                 $this->board->makeMove($move);
@@ -68,8 +67,41 @@ class BoardCommandExecutor extends ConsoleCommandExecutor
         $moves = $this->board->getLegalMoves();
         foreach ($moves as $move) 
         {
-            echo BoardUtils::getSquareString($move->getFromSquare()) . BoardUtils::getSquareString($move->getToSquare()) . " ";
+            echo Board::getSquareString($move->getFromSquare()) . Board::getSquareString($move->getToSquare()) . " ";
         }
         echo "\n";
+    }
+    
+    private function printBoard ()
+    {        
+        print "  .---.---.---.---.---.---.---.---.\n";
+        for ($rank = Board::RANK_8; $rank >= Board::RANK_1; $rank--)
+        {
+            $printRank = $this->flipped? (7 - $rank) : $rank;
+            print Board::getRankString($printRank);
+            print " ";
+            print "|";
+            for ($file = Board::FILE_A; $file <= Board::FILE_H; $file++)
+            {
+                $printFile = $this->flipped? (7 - $file) : $file;
+                $square = Board::getSquare($printFile, $printRank);
+                $piece = $this->board->getPiece($square);
+                print " ";
+                print Board::getPieceString($piece);
+                print " ";                
+                print "|";
+            }
+            print "\n";
+            print "  .---.---.---.---.---.---.---.---.\n";
+        }
+        
+        print " ";
+        for ($file = Board::FILE_A; $file <= Board::FILE_H; $file++)
+        {
+            $printFile = $this->flipped? (7 - $file) : $file;
+            print "   ";
+            print Board::getFileString($printFile);
+        }
+        print "\n";
     }
 }

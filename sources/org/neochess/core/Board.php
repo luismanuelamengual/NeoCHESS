@@ -173,6 +173,17 @@ class Board
     {
         $this->clear();
     }
+   
+    public function clear ()
+    {
+        $this->squares = [];
+        for ($square = self::A1; $square <= self::H8; $square++)
+            $this->removePiece($square);
+        $this->epSquare = self::NULL;
+        $this->castleState = 0;
+        $this->sideToMove = self::WHITE;
+        $this->historySlots = [];
+    }
     
     public function setInitialPosition ()
     {
@@ -213,15 +224,60 @@ class Board
         $this->sideToMove = self::WHITE;
     }
     
-    public function clear ()
+    public function setFenPosition ($fen) 
     {
-        $this->squares = [];
-        for ($square = self::A1; $square <= self::H8; $square++)
-            $this->removePiece($square);
-        $this->epSquare = self::NULL;
+        $this->clear();
+        $square = self::A1;
+        $index = 0;
+        $fenCharacter = $fen{0};
+        while ($fenCharacter != ' ')
+        {
+            switch ($fenCharacter) 
+            {
+                case '/': $square-=16; break;
+                case '1': $square+=1;  break;
+                case '2': $square+=2;  break;
+                case '3': $square+=3;  break;
+                case '4': $square+=4;  break;
+                case '5': $square+=5;  break;
+                case '6': $square+=6;  break;
+                case '7': $square+=7;  break;
+                case '8': $square+=8;  break;		
+                case 'p': $this->putPiece ($square, self::BLACK_PAWN); $square++; break;
+                case 'n': $this->putPiece ($square, self::BLACK_KNIGHT); $square++; break;
+                case 'b': $this->putPiece ($square, self::BLACK_BISHOP); $square++; break;
+                case 'r': $this->putPiece ($square, self::BLACK_ROOK); $square++; break;
+                case 'q': $this->putPiece ($square, self::BLACK_QUEEN); $square++; break;
+                case 'k': $this->putPiece ($square, self::BLACK_KING); $square++; break;
+                case 'P': $this->putPiece ($square, self::WHITE_PAWN); $square++; break;
+                case 'N': $this->putPiece ($square, self::WHITE_KNIGHT); $square++; break;
+                case 'B': $this->putPiece ($square, self::WHITE_BISHOP); $square++; break;
+                case 'R': $this->putPiece ($square, self::WHITE_ROOK); $square++; break;
+                case 'Q': $this->putPiece ($square, self::WHITE_QUEEN); $square++; break;
+                case 'K': $this->putPiece ($square, self::WHITE_KING); $square++; break;        
+            }
+            $fenCharacter = $fen{++$index};
+        }
+        $fenCharacter = $fen{++$index};
+        if ($fenCharacter == 'w') $this->sideToMove = self::WHITE;	
+        else if ($fenCharacter == 'b') $this->sideToMove = self::BLACK;	
+        $index+=2;
         $this->castleState = 0;
-        $this->sideToMove = self::WHITE;
-        $this->historySlots = [];
+        if ($index < sizeof($fen)) 
+        {
+            $fenCharacter = $fen{$index};
+            while($fenCharacter!=' ') 
+            {
+                if ($fenCharacter == 'K') $this->castleState |= self::WHITE_CASTLE_SHORT;
+                else if ($fenCharacter == 'Q') $this->castleState |= self::WHITE_CASTLE_LONG;
+                else if ($fenCharacter == 'k') $this->castleState |= self::BLACK_CASTLE_SHORT;
+                else if ($fenCharacter == 'q') $this->castleState |= self::BLACK_CASTLE_LONG;	
+                $fenCharacter = $fen{++$index};
+            }		
+        }
+        
+        $remainingFen = substr($fen, ++$index);
+        $this->epSquare = (!$remainingFen == "-")? $this->getSquareFromString($remainingFen) : self::NULL;
     }
     
     public function getPiece ($square)
@@ -287,6 +343,62 @@ class Board
     public static function getSquareRank ($square)
     {
         return $square >> 3;
+    }
+    
+    public static function getRankFromString ($rankString)
+    {
+        return intval($rankString) - 1;
+    }
+    
+    public static function getFileFromString ($fileString)
+    {
+        return ord($fileString) - 97;
+    }
+    
+    public static function getSquareFromString ($squareString)
+    {
+        $file = self::getFileFromString($squareString{0});
+        $rank = self::getRankFromString($squareString{1});
+        return Board::getSquare($file, $rank);
+    }
+    
+    public static function getRankString ($rank)
+    {
+        return $rank + 1;
+    }
+    
+    public static function getFileString ($file)
+    {
+        return chr($file + 97);
+    }
+    
+    public static function getSquareString ($square)
+    {
+        $file = Board::getSquareFile($square);
+        $rank = Board::getSquareRank($square);
+        return self::getFileString($file) . self::getRankString($rank);
+    }
+    
+    public static function getPieceString ($piece)
+    {
+        $pieceString = "";
+        switch ($piece)
+        {
+            case Board::WHITE_PAWN: $pieceString = "P"; break;
+            case Board::WHITE_KNIGHT : $pieceString = "N"; break;
+            case Board::WHITE_BISHOP: $pieceString = "B"; break;
+            case Board::WHITE_ROOK: $pieceString = "R"; break;
+            case Board::WHITE_QUEEN: $pieceString = "Q"; break;
+            case Board::WHITE_KING: $pieceString = "K"; break;
+            case Board::BLACK_PAWN: $pieceString = "p"; break;
+            case Board::BLACK_KNIGHT : $pieceString = "n"; break;
+            case Board::BLACK_BISHOP: $pieceString = "b"; break;
+            case Board::BLACK_ROOK: $pieceString = "r"; break;
+            case Board::BLACK_QUEEN: $pieceString = "q"; break;
+            case Board::BLACK_KING: $pieceString = "k"; break;
+            default: $pieceString = " "; break;
+        }
+        return $pieceString;
     }
     
     private function getPieceSide ($piece)
