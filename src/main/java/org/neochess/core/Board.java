@@ -56,8 +56,7 @@ public class Board {
         this.castleState = castleState;
     }
 
-    public void clear ()
-    {
+    public void clear () {
         for (Square square : Square.values()) {
             removePiece(square);
         }
@@ -104,8 +103,7 @@ public class Board {
         setSideToMove(Side.WHITE);
     }
 
-    public void setFenPosition (String fen)
-    {
+    public void setFenPosition (String fen) {
         clear();
         byte i,s;
         char c;
@@ -162,5 +160,80 @@ public class Board {
 
         String remainingText = fen.substring(++i);
         epSquare = (!remainingText.equals("-"))? Square.valueOf(remainingText) : null;
+    }
+
+    public void makeMove (Move move) {
+
+        Square fromSquare = move.getFromSquare();
+        Square toSquare = move.getToSquare();
+        Piece movingPiece = getPiece(fromSquare);
+        Piece capturedPiece = getPiece(toSquare);
+        move.setCapturedPiece(capturedPiece);
+        move.setCastleState(castleState);
+        move.setEpSquare(epSquare);
+
+        Figure movingFigure = movingPiece.getFigure();
+        if (movingFigure == Figure.PAWN) {
+
+            if (sideToMove == Side.WHITE) {
+                if (toSquare == epSquare) {
+                    removePiece(toSquare.getOffsetSquare(0,-1));
+                }
+                else if (toSquare.getRank() == Rank.EIGHT) {
+                    movingPiece = move.getPromotionPiece() != null? move.getPromotionPiece() : Piece.WHITE_QUEEN;
+                }
+                else if (fromSquare.getRank() == Rank.TWO && toSquare.getRank() == Rank.FOUR) {
+                    setEpSquare(Square.getSquare(fromSquare.getFile(), Rank.THREE));
+                }
+            }
+            else {
+                if (toSquare == epSquare) {
+                    removePiece(toSquare.getOffsetSquare(0,1));
+                }
+                else if (toSquare.getRank() == Rank.ONE) {
+                    movingPiece = move.getPromotionPiece() != null? move.getPromotionPiece() : Piece.BLACK_QUEEN;
+                }
+                else if (fromSquare.getRank() == Rank.SEVEN && toSquare.getRank() == Rank.FIVE) {
+                    setEpSquare(Square.getSquare(fromSquare.getFile(), Rank.SIX));
+                }
+            }
+        }
+        else {
+
+            if (movingFigure == Figure.KING) {
+                if (fromSquare == Square.e1) {
+                    switch (toSquare) {
+                        case g1:
+                            removePiece(Square.h1);
+                            putPiece(Square.f1, Piece.WHITE_ROOK);
+                            break;
+                        case c1:
+                            removePiece(Square.a1);
+                            putPiece(Square.d1, Piece.WHITE_ROOK);
+                            break;
+                    }
+                }
+                else if (fromSquare == Square.e8)
+                {
+                    switch (toSquare)
+                    {
+                        case g8:
+                            removePiece(Square.h8);
+                            putPiece(Square.f8, Piece.BLACK_ROOK);
+                            break;
+                        case c8:
+                            removePiece(Square.a8);
+                            putPiece(Square.d8, Piece.BLACK_ROOK);
+                            break;
+                    }
+                }
+            }
+            setEpSquare(null);
+        }
+
+        removePiece(fromSquare);
+        putPiece(toSquare, movingPiece);
+        //castleState &= self::$castleMask[$fromSquare] & self::$castleMask[$toSquare];
+        sideToMove = sideToMove.getOppositeSide();
     }
 }
