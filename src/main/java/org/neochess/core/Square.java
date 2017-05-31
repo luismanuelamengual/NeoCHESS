@@ -100,7 +100,17 @@ public enum Square {
         return rank;
     }
 
+    public Square getOffsetSquare(int fileOffset, int rankOffset) {
+        return Square.getOffsetSquare(this, fileOffset, rankOffset);
+    }
+
     public static Square getSquare(File file, Rank rank) {
         return squareCache[file.ordinal()][rank.ordinal()];
+    }
+
+    public static Square getOffsetSquare(Square square, int fileOffset, int rankOffset) {
+        File offsetFile = square.getFile().getOffsetFile(fileOffset);
+        Rank offsetRank = square.getRank().getOffsetRank(rankOffset);
+        return (offsetFile != null && offsetRank != null)? getSquare(offsetFile, offsetRank) : null;
     }
 }
