@@ -1,9 +1,6 @@
 
 package org.neochess.core;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class Board {
 
     public static final int WHITE_CASTLE_SHORT = 1;
