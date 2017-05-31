@@ -11,28 +11,28 @@ public class Board {
     public static final int BLACK_CASTLE_SHORT = 4;
     public static final int BLACK_CASTLE_LONG = 8;
 
-    private final Map<Square,Piece> squares;
+    private final Piece[] squares;
     private Side sideToMove;
     private Square epSquare;
     private int castleState;
 
     public Board() {
-        this.squares = new HashMap<>(64);
+        this.squares = new Piece[64];
     }
 
     public Piece getPiece (Square square)
     {
-        return squares.get(square);
+        return squares[square.ordinal()];
     }
 
     public void putPiece (Square square, Piece piece)
     {
-        squares.put(square, piece);
+        squares[square.ordinal()] = piece;
     }
 
     public void removePiece (Square square)
     {
-        squares.put(square, null);
+        squares[square.ordinal()] = null;
     }
 
     public Square getEpSquare() {
