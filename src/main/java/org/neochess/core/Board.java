@@ -67,38 +67,38 @@ public class Board {
 
     public void setInitialPosition () {
         clear();
-        putPiece(Square.a1, Piece.WHITE_ROOK);
-        putPiece(Square.h1, Piece.WHITE_ROOK);
-        putPiece(Square.b1, Piece.WHITE_KNIGHT);
-        putPiece(Square.g1, Piece.WHITE_KNIGHT);
-        putPiece(Square.c1, Piece.WHITE_BISHOP);
-        putPiece(Square.f1, Piece.WHITE_BISHOP);
-        putPiece(Square.d1, Piece.WHITE_QUEEN);
-        putPiece(Square.e1, Piece.WHITE_KING);
-        putPiece(Square.a2, Piece.WHITE_PAWN);
-        putPiece(Square.b2, Piece.WHITE_PAWN);
-        putPiece(Square.c2, Piece.WHITE_PAWN);
-        putPiece(Square.d2, Piece.WHITE_PAWN);
-        putPiece(Square.e2, Piece.WHITE_PAWN);
-        putPiece(Square.f2, Piece.WHITE_PAWN);
-        putPiece(Square.g2, Piece.WHITE_PAWN);
-        putPiece(Square.h2, Piece.WHITE_PAWN);
-        putPiece(Square.a8, Piece.BLACK_ROOK);
-        putPiece(Square.h8, Piece.BLACK_ROOK);
-        putPiece(Square.b8, Piece.BLACK_KNIGHT);
-        putPiece(Square.g8, Piece.BLACK_KNIGHT);
-        putPiece(Square.c8, Piece.BLACK_BISHOP);
-        putPiece(Square.f8, Piece.BLACK_BISHOP);
-        putPiece(Square.d8, Piece.BLACK_QUEEN);
-        putPiece(Square.e8, Piece.BLACK_KING);
-        putPiece(Square.a7, Piece.BLACK_PAWN);
-        putPiece(Square.b7, Piece.BLACK_PAWN);
-        putPiece(Square.c7, Piece.BLACK_PAWN);
-        putPiece(Square.d7, Piece.BLACK_PAWN);
-        putPiece(Square.e7, Piece.BLACK_PAWN);
-        putPiece(Square.f7, Piece.BLACK_PAWN);
-        putPiece(Square.g7, Piece.BLACK_PAWN);
-        putPiece(Square.h7, Piece.BLACK_PAWN);
+        putPiece(Square.A1, Piece.WHITE_ROOK);
+        putPiece(Square.H1, Piece.WHITE_ROOK);
+        putPiece(Square.B1, Piece.WHITE_KNIGHT);
+        putPiece(Square.G1, Piece.WHITE_KNIGHT);
+        putPiece(Square.C1, Piece.WHITE_BISHOP);
+        putPiece(Square.F1, Piece.WHITE_BISHOP);
+        putPiece(Square.D1, Piece.WHITE_QUEEN);
+        putPiece(Square.E1, Piece.WHITE_KING);
+        putPiece(Square.A2, Piece.WHITE_PAWN);
+        putPiece(Square.B2, Piece.WHITE_PAWN);
+        putPiece(Square.C2, Piece.WHITE_PAWN);
+        putPiece(Square.D2, Piece.WHITE_PAWN);
+        putPiece(Square.E2, Piece.WHITE_PAWN);
+        putPiece(Square.F2, Piece.WHITE_PAWN);
+        putPiece(Square.G2, Piece.WHITE_PAWN);
+        putPiece(Square.H2, Piece.WHITE_PAWN);
+        putPiece(Square.A8, Piece.BLACK_ROOK);
+        putPiece(Square.H8, Piece.BLACK_ROOK);
+        putPiece(Square.B8, Piece.BLACK_KNIGHT);
+        putPiece(Square.G8, Piece.BLACK_KNIGHT);
+        putPiece(Square.C8, Piece.BLACK_BISHOP);
+        putPiece(Square.F8, Piece.BLACK_BISHOP);
+        putPiece(Square.D8, Piece.BLACK_QUEEN);
+        putPiece(Square.E8, Piece.BLACK_KING);
+        putPiece(Square.A7, Piece.BLACK_PAWN);
+        putPiece(Square.B7, Piece.BLACK_PAWN);
+        putPiece(Square.C7, Piece.BLACK_PAWN);
+        putPiece(Square.D7, Piece.BLACK_PAWN);
+        putPiece(Square.E7, Piece.BLACK_PAWN);
+        putPiece(Square.F7, Piece.BLACK_PAWN);
+        putPiece(Square.G7, Piece.BLACK_PAWN);
+        putPiece(Square.H7, Piece.BLACK_PAWN);
         setCastleState(WHITE_CASTLE_LONG | WHITE_CASTLE_SHORT | BLACK_CASTLE_LONG | BLACK_CASTLE_SHORT);
         setSideToMove(Side.WHITE);
     }
@@ -201,29 +201,27 @@ public class Board {
         else {
 
             if (movingFigure == Figure.KING) {
-                if (fromSquare == Square.e1) {
+                if (fromSquare == Square.E1) {
                     switch (toSquare) {
-                        case g1:
-                            removePiece(Square.h1);
-                            putPiece(Square.f1, Piece.WHITE_ROOK);
+                        case G1:
+                            removePiece(Square.H1);
+                            putPiece(Square.F1, Piece.WHITE_ROOK);
                             break;
-                        case c1:
-                            removePiece(Square.a1);
-                            putPiece(Square.d1, Piece.WHITE_ROOK);
+                        case C1:
+                            removePiece(Square.A1);
+                            putPiece(Square.D1, Piece.WHITE_ROOK);
                             break;
                     }
                 }
-                else if (fromSquare == Square.e8)
-                {
-                    switch (toSquare)
-                    {
-                        case g8:
-                            removePiece(Square.h8);
-                            putPiece(Square.f8, Piece.BLACK_ROOK);
+                else if (fromSquare == Square.E8) {
+                    switch (toSquare) {
+                        case G8:
+                            removePiece(Square.H8);
+                            putPiece(Square.F8, Piece.BLACK_ROOK);
                             break;
-                        case c8:
-                            removePiece(Square.a8);
-                            putPiece(Square.d8, Piece.BLACK_ROOK);
+                        case C8:
+                            removePiece(Square.A8);
+                            putPiece(Square.D8, Piece.BLACK_ROOK);
                             break;
                     }
                 }
