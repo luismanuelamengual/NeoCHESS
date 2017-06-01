@@ -8,7 +8,7 @@ public class Main {
 
     public static void main (String[] args) {
 
-        long time = System.currentTimeMillis();
+        /*long time = System.currentTimeMillis();
 
         System.out.println(Square.F3);
         System.out.println(Square.F3.getFile());
@@ -20,6 +20,21 @@ public class Main {
 
 
         long elpasedTime = System.currentTimeMillis() - time;
-        System.out.println ("Elapsed: " + elpasedTime);
+        System.out.println ("Elapsed: " + elpasedTime);*/
+
+
+        int move = 0;
+
+        int fromSquare = 12;
+        int toSquare = 45;
+
+        move |= (fromSquare << 6);
+        move |= (toSquare << 12);
+
+        int f = (move >> 6) & 63;
+        int t = (move >> 12) & 63;
+
+        System.out.println (f);
+        System.out.println (t);
     }
 }
