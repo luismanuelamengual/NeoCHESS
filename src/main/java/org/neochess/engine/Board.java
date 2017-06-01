@@ -368,4 +368,63 @@ public class Board {
         sideToMove = 1 ^ sideToMove;
         return appliedMove;
     }
+
+    protected void unmakeMove (int move) {
+
+        int fromSquare = (move >> MOVE_FROM_SQUARE_OFFSET) & MOVE_FROM_SQUARE_MASK;
+        int toSquare = (move >> MOVE_TO_SQUARE_OFFSET) & MOVE_TO_SQUARE_MASK;
+        int capturedPiece = (move >> MOVE_CAPTURED_PIECE_OFFSET) & MOVE_CAPTURED_PIECE_MASK;
+        int lastCastleState = (move >> MOVE_CASTLE_STATE_OFFSET) & MOVE_CASTLE_STATE_MASK;
+        int lastEpSquare = (move >> MOVE_EP_SQUARE_OFFSET) & MOVE_EP_SQUARE_MASK;
+        int movingPiece = squares[toSquare];
+        int movingFigure = getPieceFigure(movingPiece);
+        int movingSide = getPieceSide(movingPiece);
+
+        if (movingFigure == PAWN) {
+            if (toSquare == lastEpSquare) {
+                if (movingSide == WHITE) {
+                    putPiece(toSquare - 8, BLACK_PAWN);
+                }
+                else {
+                    putPiece(toSquare + 8, WHITE_PAWN);
+                }
+            }
+        }
+        else if (movingFigure == KING) {
+            if (fromSquare == E1) {
+                switch (toSquare) {
+                    case G1:
+                        removePiece(F1);
+                        putPiece(H1, WHITE_ROOK);
+                        break;
+                    case C1:
+                        removePiece(D1);
+                        putPiece(A1, WHITE_ROOK);
+                        break;
+                }
+            }
+            else if (fromSquare == E8) {
+                switch (toSquare) {
+                    case G8:
+                        removePiece(F8);
+                        putPiece(H8, BLACK_ROOK);
+                        break;
+                    case C8:
+                        removePiece(D8);
+                        putPiece(A8, BLACK_ROOK);
+                        break;
+                }
+            }
+        }
+        if (capturedPiece != EMPTY) {
+            putPiece(toSquare, capturedPiece);
+        }
+        else {
+            removePiece(toSquare);
+        }
+        putPiece(fromSquare, movingPiece);
+        epSquare = lastEpSquare;
+        castleState = lastCastleState;
+        sideToMove = 1 ^ sideToMove;
+    }
 }
