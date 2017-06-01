@@ -27,14 +27,18 @@ public class Main {
 
         int fromSquare = 12;
         int toSquare = 45;
+        int epSquare = 64;
 
         move |= (fromSquare << 6);
         move |= (toSquare << 12);
+        move |= (epSquare << 18);
 
         int f = (move >> 6) & 63;
         int t = (move >> 12) & 63;
+        int e = (move >> 18) & 127;
 
         System.out.println (f);
         System.out.println (t);
+        System.out.println (e);
     }
 }

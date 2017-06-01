@@ -3,33 +3,32 @@ package org.neochess.engine;
 
 public class Board {
 
-    public static final int NOSIDE = -1;
+    public static final int EMPTY = 0;
+
     public static final int WHITE = 0;
     public static final int BLACK = 1;
 
-    public static final int EMPTY = -1;
+    public static final int PAWN = 1;
+    public static final int KNIGHT = 2;
+    public static final int BISHOP = 3;
+    public static final int ROOK = 4;
+    public static final int QUEEN = 5;
+    public static final int KING = 6;
 
-    public static final int PAWN = 0;
-    public static final int KNIGHT = 1;
-    public static final int BISHOP = 2;
-    public static final int ROOK = 3;
-    public static final int QUEEN = 4;
-    public static final int KING = 5;
+    public static final int WHITE_PAWN = 1;
+    public static final int WHITE_KNIGHT = 2;
+    public static final int WHITE_BISHOP = 3;
+    public static final int WHITE_ROOK = 4;
+    public static final int WHITE_QUEEN = 5;
+    public static final int WHITE_KING = 6;
+    public static final int BLACK_PAWN = 7;
+    public static final int BLACK_KNIGHT = 8;
+    public static final int BLACK_BISHOP = 9;
+    public static final int BLACK_ROOK = 10;
+    public static final int BLACK_QUEEN = 11;
+    public static final int BLACK_KING = 12;
 
-    public static final int WHITE_PAWN = 0;
-    public static final int WHITE_KNIGHT = 1;
-    public static final int WHITE_BISHOP = 2;
-    public static final int WHITE_ROOK = 3;
-    public static final int WHITE_QUEEN = 4;
-    public static final int WHITE_KING = 5;
-    public static final int BLACK_PAWN = 6;
-    public static final int BLACK_KNIGHT = 7;
-    public static final int BLACK_BISHOP = 8;
-    public static final int BLACK_ROOK = 9;
-    public static final int BLACK_QUEEN = 10;
-    public static final int BLACK_KING = 11;
-
-    public static final int INVALIDSQUARE = -1;
+    public static final int INVALIDSQUARE = 64;
     public static final int A1 = 0;
     public static final int B1 = 1;
     public static final int C1 = 2;
@@ -113,7 +112,6 @@ public class Board {
     public static final int RANK_7 = 6;
     public static final int RANK_8 = 7;
 
-    public static final int NOCASTLE = 0;
     public static final int WHITE_CASTLE_SHORT = 1;
     public static final int WHITE_CASTLE_LONG = 2;
     public static final int BLACK_CASTLE_SHORT = 4;
@@ -124,28 +122,28 @@ public class Board {
     private static final int MOVE_PROMOTION_PIECE_OFFSET = 12;
     private static final int MOVE_CAPTURED_PIECE_OFFSET = 16;
     private static final int MOVE_EP_SQUARE_OFFSET = 20;
-    private static final int MOVE_CASTLE_STATE_OFFSET = 26;
+    private static final int MOVE_CASTLE_STATE_OFFSET = 27;
 
     private static final int MOVE_FROM_SQUARE_MASK = 63;
     private static final int MOVE_TO_SQUARE_MASK = 63;
     private static final int MOVE_PROMOTION_PIECE_MASK = 31;
     private static final int MOVE_CAPTURED_PIECE_MASK = 31;
-    private static final int MOVE_EP_SQUARE_MASK = 63;
+    private static final int MOVE_EP_SQUARE_MASK = 127;
     private static final int MOVE_CASTLE_STATE_MASK = 31;
 
     private static int[] mailbox = {
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, 56, 57, 58, 59, 60, 61, 62, 63, -1,
-        -1, 48, 49, 50, 51, 52, 53, 54, 55, -1,
-        -1, 40, 41, 42, 43, 44, 45, 46, 47, -1,
-        -1, 32, 33, 34, 35, 36, 37, 38, 39, -1,
-        -1, 24, 25, 26, 27, 28, 29, 30, 31, -1,
-        -1, 16, 17, 18, 19, 20, 21, 22, 23, -1,
-        -1,  8,  9, 10, 11, 12, 13, 14, 15, -1,
-        -1,  0,  1,  2,  3,  4,  5,  6,  7, -1,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
+        INVALIDSQUARE, INVALIDSQUARE, INVALIDSQUARE, INVALIDSQUARE, INVALIDSQUARE, INVALIDSQUARE, INVALIDSQUARE, INVALIDSQUARE, INVALIDSQUARE, INVALIDSQUARE,
+        INVALIDSQUARE, INVALIDSQUARE, INVALIDSQUARE, INVALIDSQUARE, INVALIDSQUARE, INVALIDSQUARE, INVALIDSQUARE, INVALIDSQUARE, INVALIDSQUARE, INVALIDSQUARE,
+        INVALIDSQUARE, 56, 57, 58, 59, 60, 61, 62, 63, INVALIDSQUARE,
+        INVALIDSQUARE, 48, 49, 50, 51, 52, 53, 54, 55, INVALIDSQUARE,
+        INVALIDSQUARE, 40, 41, 42, 43, 44, 45, 46, 47, INVALIDSQUARE,
+        INVALIDSQUARE, 32, 33, 34, 35, 36, 37, 38, 39, INVALIDSQUARE,
+        INVALIDSQUARE, 24, 25, 26, 27, 28, 29, 30, 31, INVALIDSQUARE,
+        INVALIDSQUARE, 16, 17, 18, 19, 20, 21, 22, 23, INVALIDSQUARE,
+        INVALIDSQUARE,  8,  9, 10, 11, 12, 13, 14, 15, INVALIDSQUARE,
+        INVALIDSQUARE,  0,  1,  2,  3,  4,  5,  6,  7, INVALIDSQUARE,
+        INVALIDSQUARE, INVALIDSQUARE, INVALIDSQUARE, INVALIDSQUARE, INVALIDSQUARE, INVALIDSQUARE, INVALIDSQUARE, INVALIDSQUARE, INVALIDSQUARE, INVALIDSQUARE,
+        INVALIDSQUARE, INVALIDSQUARE, INVALIDSQUARE, INVALIDSQUARE, INVALIDSQUARE, INVALIDSQUARE, INVALIDSQUARE, INVALIDSQUARE, INVALIDSQUARE, INVALIDSQUARE
     };
 
     private static int[] mailbox64 = {
@@ -169,6 +167,10 @@ public class Board {
         15, 15, 15, 15, 15, 15, 15, 15,
          7, 15, 15, 15,  3, 15, 15, 11
     };
+
+    private static int[] pieceSide = {EMPTY, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, BLACK, BLACK, BLACK, BLACK, BLACK, BLACK};
+
+    private static int[] pieceFigure = {EMPTY, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING};
 
     private int[] squares;
     private int epSquare;
@@ -283,12 +285,12 @@ public class Board {
 
     protected static int getPieceSide (int piece)
     {
-        return (int)Math.floor(piece / 6);
+        return pieceSide[piece];
     }
 
     protected static int getPieceFigure (int piece)
     {
-        return piece % 6;
+        return pieceFigure[piece];
     }
 
     protected int makeMove (int move) {
