@@ -33,8 +33,9 @@ public class BoardProcessor extends ConsoleProcessor {
                 flipped = !flipped;
                 break;
             case "move":
-                int fromSquare = getSquareFromString(command.getParameters().get(0));
-                int toSquare = getSquareFromString(command.getParameters().get(1));
+                String moveString = command.getParameters().get(0);
+                int fromSquare = getSquareFromString(moveString.substring(0,2));
+                int toSquare = getSquareFromString(moveString.substring(2));
                 board.makeMove(fromSquare, toSquare);
                 printBoard();
                 break;
