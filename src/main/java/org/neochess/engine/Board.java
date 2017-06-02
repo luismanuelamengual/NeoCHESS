@@ -157,6 +157,16 @@ public class Board {
         21, 22, 23, 24, 25, 26, 27, 28
     };
 
+    private static boolean[] slide = {false, false, false, true, true, true, false};
+    private static int[][] offsets = {
+            {},
+            {},
+            { -21, -19, -12,  -8,   8,  12,  19,  21 },
+            { -11,  -9,   9,  11 },
+            { -10,  -1,   1,  10 },
+            { -11, -10,  -9,  -1,   1,   9,  10,  11 },
+            { -11, -10,  -9,  -1,   1,   9,  10,  11 }};
+
     private static int[] castleMask = {
         13, 15, 15, 15, 12, 15, 15, 14,
         15, 15, 15, 15, 15, 15, 15, 15,
@@ -264,6 +274,11 @@ public class Board {
         sideToMove = WHITE;
     }
 
+    public void makeMove (int fromSquare, int toSquare) {
+
+        makeMove (createMove(fromSquare, toSquare));
+    }
+
     public static int getSquare (int file, int rank)
     {
         return (rank * 8) + file;
@@ -293,11 +308,19 @@ public class Board {
         return pieceFigure[piece];
     }
 
-    public void makeMove (int fromSquare, int toSquare) {
+    protected int createMove (int fromSquare, int toSquare) {
         int move = 0;
         move |= (fromSquare << MOVE_FROM_SQUARE_OFFSET);
         move |= (toSquare << MOVE_TO_SQUARE_OFFSET);
-        int appliedMove = makeMove (move);
+        return move;
+    }
+
+    protected int createMove (int fromSquare, int toSquare, int promotionPiece) {
+        int move = 0;
+        move |= (fromSquare << MOVE_FROM_SQUARE_OFFSET);
+        move |= (toSquare << MOVE_TO_SQUARE_OFFSET);
+        move |= (promotionPiece << MOVE_PROMOTION_PIECE_OFFSET);
+        return move;
     }
 
     protected int makeMove (int move) {
@@ -433,5 +456,116 @@ public class Board {
         epSquare = lastEpSquare;
         castleState = lastCastleState;
         sideToMove = 1 ^ sideToMove;
+    }
+
+    protected void generatePseudoLegalMoves (int[] moves) {
+
+        int moveIndex = 0;
+        int oppositeSide = 1 ^ sideToMove;
+        for (int testSquare = A1; testSquare <= H8; testSquare++) {
+
+            int piece = squares[testSquare];
+            int pieceSide = getPieceSide(piece);
+            if (sideToMove == pieceSide) {
+
+                int pieceFigure = getPieceFigure(piece);
+                if (pieceFigure == PAWN) {
+
+                    int pieceFile = getSquareFile(testSquare);
+                    if (sideToMove == WHITE) {
+
+                        if (pieceFile != FILE_A && getPieceSide(squares[testSquare + 7]) == BLACK) {
+                            moves[moveIndex++] = createMove(testSquare, testSquare + 7);
+                        }
+                        if (pieceFile != FILE_H && getPieceSide(squares[testSquare + 9]) == BLACK) {
+                            moves[moveIndex++] = createMove(testSquare, testSquare + 9);
+                        }
+                        if (squares[testSquare + 8] == EMPTY) {
+                            moves[moveIndex++] = createMove(testSquare, testSquare + 8);
+                            if (getSquareRank(testSquare) == RANK_2 && squares[testSquare + 16] == EMPTY) {
+                                moves[moveIndex++] = createMove(testSquare, testSquare + 16);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (pieceFile != FILE_A && getPieceSide(squares[testSquare - 9]) == WHITE) {
+                            moves[moveIndex++] = createMove(testSquare, testSquare - 9);
+                        }
+                        if (pieceFile != FILE_H && getPieceSide(squares[testSquare - 7]) == WHITE) {
+                            moves[moveIndex++] = createMove(testSquare, testSquare - 7);
+                        }
+                        if (squares[testSquare - 8] == EMPTY) {
+                            moves[moveIndex++] = createMove(testSquare, testSquare - 8);
+                            if (getSquareRank(testSquare) == RANK_7 && squares[testSquare - 16] == EMPTY) {
+                                moves[moveIndex++] = createMove(testSquare, testSquare - 16);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    for (int offset : offsets[pieceFigure]) {
+
+                        int currentOffsetSquare = testSquare;
+                        while (true) {
+
+                            currentOffsetSquare = mailbox[mailbox64[currentOffsetSquare] + offset];
+                            if (currentOffsetSquare == EMPTY) {
+                                break;
+                            }
+                            if (squares[currentOffsetSquare] != EMPTY) {
+                                if (getPieceSide(squares[currentOffsetSquare]) == oppositeSide) {
+                                    moves[moveIndex++] = createMove(testSquare, currentOffsetSquare);
+                                }
+                                break;
+                            }
+                            moves[moveIndex++] = createMove(testSquare, currentOffsetSquare);
+                            if (!slide[pieceFigure]) {
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (sideToMove == WHITE) {
+
+            if ((castleState & WHITE_CASTLE_SHORT) > 0 && squares[F1] == EMPTY && squares[G1] == EMPTY) {
+                moves[moveIndex++] = createMove(E1, G1);
+            }
+            if ((castleState & WHITE_CASTLE_LONG) > 0 && squares[D1] == EMPTY && squares[C1] == EMPTY && squares[B1] == EMPTY) {
+                moves[moveIndex++] = createMove(E1, C1);
+            }
+            if (epSquare != EMPTY) {
+                int epSquareFile = getSquareFile(epSquare);
+                if (epSquareFile != FILE_A && getPiece(epSquare - 9) == WHITE_PAWN) {
+                    moves[moveIndex++] = createMove(epSquare - 9, epSquare);
+                }
+                if (epSquareFile != FILE_H && getPiece(epSquare - 7) == WHITE_PAWN) {
+                    moves[moveIndex++] = createMove(epSquare - 7, epSquare);
+                }
+            }
+        }
+        else {
+
+            if ((castleState & BLACK_CASTLE_SHORT) > 0 && squares[F8] == EMPTY && squares[G8] == EMPTY) {
+                moves[moveIndex++] = createMove(E8, G8);
+            }
+            if ((castleState & BLACK_CASTLE_LONG) > 0 && squares[D8] == EMPTY && squares[C8] == EMPTY && squares[B8] == EMPTY) {
+                moves[moveIndex++] = createMove(E8, C8);
+            }
+            if (epSquare != EMPTY) {
+                int epSquareFile = getSquareFile(epSquare);
+                if (epSquareFile != FILE_A && getPiece(epSquare + 7) == BLACK_PAWN) {
+                    moves[moveIndex++] = createMove(epSquare + 7, epSquare);
+                }
+                if (epSquareFile != FILE_H && getPiece(epSquare + 9) == BLACK_PAWN) {
+                    moves[moveIndex++] = createMove(epSquare + 9, epSquare);
+                }
+            }
+        }
+        moves[moveIndex++] = 0;
     }
 }
