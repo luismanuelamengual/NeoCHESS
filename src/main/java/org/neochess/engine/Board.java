@@ -297,6 +297,71 @@ public class Board {
         return moves;
     }
 
+    public boolean isSquareAttacked (int square, int side) {
+
+        for (int testSquare = A1; testSquare <= H8; testSquare++) {
+
+            int piece = squares[testSquare];
+            int pieceSide = getPieceSide(piece);
+            if (side == pieceSide) {
+
+                int pieceFigure = getPieceFigure(piece);
+                if (pieceFigure == PAWN) {
+
+                    int pieceFile = getSquareFile(testSquare);
+                    if (side == WHITE) {
+                        if (pieceFile != FILE_A && testSquare + 7 == square) return true;
+                        if (pieceFile != FILE_H && testSquare + 9 == square) return true;
+                    }
+                    else {
+                        if (pieceFile != FILE_A && testSquare - 9 == square) return true;
+                        if (pieceFile != FILE_H && testSquare - 7 == square) return true;
+                    }
+                }
+                else {
+                    for (int offset : offsets[pieceFigure]) {
+
+                        int currentOffsetSquare = testSquare;
+                        while (true) {
+                            currentOffsetSquare = mailbox[mailbox64[currentOffsetSquare] + offset];
+                            if (currentOffsetSquare == INVALIDSQUARE) {
+                                break;
+                            }
+                            if (currentOffsetSquare == square) {
+                                return true;
+                            }
+                            if (squares[currentOffsetSquare] != EMPTY) {
+                                break;
+                            }
+                            if (!slide[pieceFigure]) {
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean inCheck () {
+        return isKingSquareAttacked(sideToMove);
+    }
+
+    protected boolean isKingSquareAttacked (int side) {
+
+        boolean inCheck = false;
+        int oppositeSide = 1 ^ side;
+        int sideKingPiece = side == WHITE? WHITE_KING : BLACK_KING;
+        for (int testSquare = A1; testSquare <= H8; testSquare++) {
+            if (squares[testSquare] == sideKingPiece) {
+                inCheck = isSquareAttacked(testSquare, oppositeSide);
+                break;
+            }
+        }
+        return inCheck;
+    }
+
     public static int getSquare (int file, int rank)
     {
         return (rank * 8) + file;
