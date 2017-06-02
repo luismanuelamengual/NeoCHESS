@@ -264,31 +264,31 @@ public class Board {
         sideToMove = WHITE;
     }
 
-    protected static int getSquare (int file, int rank)
+    public static int getSquare (int file, int rank)
     {
         return (rank * 8) + file;
     }
 
-    protected static int getOffsetSquare (int square, int horizontalOffset, int verticalOffset) {
+    public static int getOffsetSquare (int square, int horizontalOffset, int verticalOffset) {
         return mailbox[mailbox64[square] - (verticalOffset * 10) + horizontalOffset];
     }
 
-    protected static int getSquareFile (int square)
+    public static int getSquareFile (int square)
     {
         return square & 7;
     }
 
-    protected static int getSquareRank (int square)
+    public static int getSquareRank (int square)
     {
         return square >> 3;
     }
 
-    protected static int getPieceSide (int piece)
+    public static int getPieceSide (int piece)
     {
         return pieceSide[piece];
     }
 
-    protected static int getPieceFigure (int piece)
+    public static int getPieceFigure (int piece)
     {
         return pieceFigure[piece];
     }
