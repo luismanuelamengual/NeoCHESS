@@ -2,12 +2,15 @@
 package example.processors;
 
 import org.neochess.engine.Board;
+import org.neochess.engine.Move;
 import org.neogroup.sparks.console.Command;
 import org.neogroup.sparks.console.Console;
 import org.neogroup.sparks.console.processors.ConsoleProcessor;
 import org.neogroup.sparks.console.processors.ProcessCommands;
 
-@ProcessCommands({"print", "initial", "flip", "move"})
+import java.util.List;
+
+@ProcessCommands({"print", "init", "flip", "move", "list"})
 public class BoardProcessor extends ConsoleProcessor {
 
     private boolean flipped;
@@ -23,7 +26,7 @@ public class BoardProcessor extends ConsoleProcessor {
     protected void processCommand(Console console, Command command) {
 
         switch (command.getName()) {
-            case "initial":
+            case "init":
                 board.setInitialPosition();
                 break;
             case "print":
@@ -36,17 +39,47 @@ public class BoardProcessor extends ConsoleProcessor {
                 String moveString = command.getParameters().get(0);
                 int fromSquare = getSquareFromString(moveString.substring(0,2));
                 int toSquare = getSquareFromString(moveString.substring(2));
-                board.makeMove(fromSquare, toSquare);
+                board.makeMove(new Move(fromSquare, toSquare));
                 printBoard();
                 break;
+            case "list":
+                printLegalMoves();
+                break;
         }
+    }
+
+    private String getSquareString (int square) {
+
+        int file = Board.getSquareFile(square);
+        int rank = Board.getSquareRank(square);
+        StringBuilder squareString = new StringBuilder();
+        switch (file) {
+            case Board.FILE_A: squareString.append("a"); break;
+            case Board.FILE_B: squareString.append("b"); break;
+            case Board.FILE_C: squareString.append("c"); break;
+            case Board.FILE_D: squareString.append("d"); break;
+            case Board.FILE_E: squareString.append("e"); break;
+            case Board.FILE_F: squareString.append("f"); break;
+            case Board.FILE_G: squareString.append("g"); break;
+            case Board.FILE_H: squareString.append("h"); break;
+        }
+        switch (rank) {
+            case Board.RANK_1: squareString.append("1"); break;
+            case Board.RANK_2: squareString.append("2"); break;
+            case Board.RANK_3: squareString.append("3"); break;
+            case Board.RANK_4: squareString.append("4"); break;
+            case Board.RANK_5: squareString.append("5"); break;
+            case Board.RANK_6: squareString.append("6"); break;
+            case Board.RANK_7: squareString.append("7"); break;
+            case Board.RANK_8: squareString.append("8"); break;
+        }
+        return squareString.toString();
     }
 
     private int getSquareFromString (String squareString) {
 
         char fileChar = squareString.charAt(0);
         char rankChar = squareString.charAt(1);
-
         int file = -1;
         switch (fileChar) {
             case 'a': file = Board.FILE_A; break;
@@ -58,7 +91,6 @@ public class BoardProcessor extends ConsoleProcessor {
             case 'g': file = Board.FILE_G; break;
             case 'h': file = Board.FILE_H; break;
         }
-
         int rank = -1;
         switch (rankChar) {
             case '1': rank = Board.RANK_1; break;
@@ -70,8 +102,17 @@ public class BoardProcessor extends ConsoleProcessor {
             case '7': rank = Board.RANK_7; break;
             case '8': rank = Board.RANK_8; break;
         }
-
         return Board.getSquare(file, rank);
+    }
+
+    private void printLegalMoves () {
+        List<Move> moves = board.getLegalMoves();
+        for (Move move : moves) {
+            System.out.print(getSquareString(move.getFromSquare()));
+            System.out.print(getSquareString(move.getToSquare()));
+            System.out.print(" ");
+        }
+        System.out.println();
     }
 
     private void printBoard () {

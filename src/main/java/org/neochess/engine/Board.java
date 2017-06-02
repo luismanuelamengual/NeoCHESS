@@ -1,6 +1,9 @@
 
 package org.neochess.engine;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Board {
 
     public static final int EMPTY = 0;
@@ -274,9 +277,24 @@ public class Board {
         sideToMove = WHITE;
     }
 
-    public void makeMove (int fromSquare, int toSquare) {
+    public void makeMove (Move move) {
+        makeMove (createMove(move.getFromSquare(), move.getToSquare()));
+    }
 
-        makeMove (createMove(fromSquare, toSquare));
+    public List<Move> getLegalMoves () {
+        List<Move> moves = new ArrayList<>();
+        int[] generatedMoves = new int[200];
+        generatePseudoLegalMoves (generatedMoves);
+        for (int move : generatedMoves) {
+            if (move == 0) {
+                break;
+            }
+            int fromSquare = (move >> MOVE_FROM_SQUARE_OFFSET) & MOVE_FROM_SQUARE_MASK;
+            int toSquare = (move >> MOVE_TO_SQUARE_OFFSET) & MOVE_TO_SQUARE_MASK;
+            int promotionPiece = (move >> MOVE_PROMOTION_PIECE_OFFSET) & MOVE_PROMOTION_PIECE_MASK;
+            moves.add(new Move(fromSquare, toSquare, promotionPiece));
+        }
+        return moves;
     }
 
     public static int getSquare (int file, int rank)
@@ -511,7 +529,7 @@ public class Board {
                         while (true) {
 
                             currentOffsetSquare = mailbox[mailbox64[currentOffsetSquare] + offset];
-                            if (currentOffsetSquare == EMPTY) {
+                            if (currentOffsetSquare == INVALIDSQUARE) {
                                 break;
                             }
                             if (squares[currentOffsetSquare] != EMPTY) {
@@ -538,7 +556,7 @@ public class Board {
             if ((castleState & WHITE_CASTLE_LONG) > 0 && squares[D1] == EMPTY && squares[C1] == EMPTY && squares[B1] == EMPTY) {
                 moves[moveIndex++] = createMove(E1, C1);
             }
-            if (epSquare != EMPTY) {
+            if (epSquare != INVALIDSQUARE) {
                 int epSquareFile = getSquareFile(epSquare);
                 if (epSquareFile != FILE_A && getPiece(epSquare - 9) == WHITE_PAWN) {
                     moves[moveIndex++] = createMove(epSquare - 9, epSquare);
@@ -556,7 +574,7 @@ public class Board {
             if ((castleState & BLACK_CASTLE_LONG) > 0 && squares[D8] == EMPTY && squares[C8] == EMPTY && squares[B8] == EMPTY) {
                 moves[moveIndex++] = createMove(E8, C8);
             }
-            if (epSquare != EMPTY) {
+            if (epSquare != INVALIDSQUARE) {
                 int epSquareFile = getSquareFile(epSquare);
                 if (epSquareFile != FILE_A && getPiece(epSquare + 7) == BLACK_PAWN) {
                     moves[moveIndex++] = createMove(epSquare + 7, epSquare);
