@@ -293,6 +293,13 @@ public class Board {
         return pieceFigure[piece];
     }
 
+    public void makeMove (int fromSquare, int toSquare) {
+        int move = 0;
+        move |= (fromSquare << MOVE_FROM_SQUARE_OFFSET);
+        move |= (toSquare << MOVE_TO_SQUARE_OFFSET);
+        int appliedMove = makeMove (move);
+    }
+
     protected int makeMove (int move) {
 
         int fromSquare = (move >> MOVE_FROM_SQUARE_OFFSET) & MOVE_FROM_SQUARE_MASK;

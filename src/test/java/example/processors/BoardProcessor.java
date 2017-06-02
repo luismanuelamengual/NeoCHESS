@@ -7,7 +7,7 @@ import org.neogroup.sparks.console.Console;
 import org.neogroup.sparks.console.processors.ConsoleProcessor;
 import org.neogroup.sparks.console.processors.ProcessCommands;
 
-@ProcessCommands({"print", "initial", "flip"})
+@ProcessCommands({"print", "initial", "flip", "move"})
 public class BoardProcessor extends ConsoleProcessor {
 
     private boolean flipped;
@@ -24,7 +24,7 @@ public class BoardProcessor extends ConsoleProcessor {
 
         switch (command.getName()) {
             case "initial":
-                setInitialPosition();
+                board.setInitialPosition();
                 break;
             case "print":
                 printBoard ();
@@ -32,11 +32,45 @@ public class BoardProcessor extends ConsoleProcessor {
             case "flip":
                 flipped = !flipped;
                 break;
+            case "move":
+                int fromSquare = getSquareFromString(command.getParameters().get(0));
+                int toSquare = getSquareFromString(command.getParameters().get(1));
+                board.makeMove(fromSquare, toSquare);
+                printBoard();
+                break;
         }
     }
 
-    private void setInitialPosition() {
-        board.setInitialPosition();
+    private int getSquareFromString (String squareString) {
+
+        char fileChar = squareString.charAt(0);
+        char rankChar = squareString.charAt(1);
+
+        int file = -1;
+        switch (fileChar) {
+            case 'a': file = Board.FILE_A; break;
+            case 'b': file = Board.FILE_B; break;
+            case 'c': file = Board.FILE_C; break;
+            case 'd': file = Board.FILE_D; break;
+            case 'e': file = Board.FILE_E; break;
+            case 'f': file = Board.FILE_F; break;
+            case 'g': file = Board.FILE_G; break;
+            case 'h': file = Board.FILE_H; break;
+        }
+
+        int rank = -1;
+        switch (rankChar) {
+            case '1': rank = Board.RANK_1; break;
+            case '2': rank = Board.RANK_2; break;
+            case '3': rank = Board.RANK_3; break;
+            case '4': rank = Board.RANK_4; break;
+            case '5': rank = Board.RANK_5; break;
+            case '6': rank = Board.RANK_6; break;
+            case '7': rank = Board.RANK_7; break;
+            case '8': rank = Board.RANK_8; break;
+        }
+
+        return Board.getSquare(file, rank);
     }
 
     private void printBoard () {
