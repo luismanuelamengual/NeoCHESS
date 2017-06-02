@@ -129,10 +129,10 @@ public class Board {
 
     private static final int MOVE_FROM_SQUARE_MASK = 63;
     private static final int MOVE_TO_SQUARE_MASK = 63;
-    private static final int MOVE_PROMOTION_PIECE_MASK = 31;
-    private static final int MOVE_CAPTURED_PIECE_MASK = 31;
+    private static final int MOVE_PROMOTION_PIECE_MASK = 15;
+    private static final int MOVE_CAPTURED_PIECE_MASK = 15;
     private static final int MOVE_EP_SQUARE_MASK = 127;
-    private static final int MOVE_CASTLE_STATE_MASK = 31;
+    private static final int MOVE_CASTLE_STATE_MASK = 15;
 
     private static int[] mailbox = {
         INVALIDSQUARE, INVALIDSQUARE, INVALIDSQUARE, INVALIDSQUARE, INVALIDSQUARE, INVALIDSQUARE, INVALIDSQUARE, INVALIDSQUARE, INVALIDSQUARE, INVALIDSQUARE,
