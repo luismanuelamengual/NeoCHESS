@@ -8,8 +8,8 @@ public class Board {
 
     public static final int EMPTY = 0;
 
-    public static final int WHITE = 0;
-    public static final int BLACK = 1;
+    public static final int WHITE = 1;
+    public static final int BLACK = 2;
 
     public static final int PAWN = 1;
     public static final int KNIGHT = 2;
@@ -284,7 +284,7 @@ public class Board {
     public List<Move> getLegalMoves () {
         List<Move> moves = new ArrayList<>();
         int[] generatedMoves = new int[200];
-        generatePseudoLegalMoves (generatedMoves);
+        generateLegalMoves (generatedMoves);
         for (int move : generatedMoves) {
             if (move == 0) {
                 break;
@@ -351,7 +351,7 @@ public class Board {
     protected boolean isKingSquareAttacked (int side) {
 
         boolean inCheck = false;
-        int oppositeSide = 1 ^ side;
+        int oppositeSide = getOppositeSide(side);
         int sideKingPiece = side == WHITE? WHITE_KING : BLACK_KING;
         for (int testSquare = A1; testSquare <= H8; testSquare++) {
             if (squares[testSquare] == sideKingPiece) {
@@ -389,6 +389,10 @@ public class Board {
     public static int getPieceFigure (int piece)
     {
         return pieceFigure[piece];
+    }
+
+    public static int getOppositeSide (int side) {
+        return side == WHITE? BLACK : WHITE;
     }
 
     protected int createMove (int fromSquare, int toSquare) {
@@ -478,7 +482,7 @@ public class Board {
         removePiece(fromSquare);
         putPiece(toSquare, movingPiece);
         castleState &= castleMask[fromSquare] & castleMask[toSquare];
-        sideToMove = 1 ^ sideToMove;
+        sideToMove = getOppositeSide(sideToMove);
         return appliedMove;
     }
 
@@ -538,13 +542,34 @@ public class Board {
         putPiece(fromSquare, movingPiece);
         epSquare = lastEpSquare;
         castleState = lastCastleState;
-        sideToMove = 1 ^ sideToMove;
+        sideToMove = getOppositeSide(sideToMove);
+    }
+
+    protected void generateLegalMoves (int[] moves) {
+        int currentSideToMove = sideToMove;
+        generatePseudoLegalMoves(moves);
+        int moveIndex, moveShiftIndex;
+        for (moveIndex = 0, moveShiftIndex = 0; moveIndex < moves.length; moveIndex++) {
+
+            int move = moves[moveIndex];
+            if (moveShiftIndex != moveIndex) {
+                moves[moveShiftIndex] = move;
+            }
+            if (move == 0) {
+                break;
+            }
+            int appliedMove = makeMove(move);
+            if (!isKingSquareAttacked(currentSideToMove)) {
+                moveShiftIndex++;
+            }
+            unmakeMove(appliedMove);
+        }
     }
 
     protected void generatePseudoLegalMoves (int[] moves) {
 
         int moveIndex = 0;
-        int oppositeSide = 1 ^ sideToMove;
+        int oppositeSide = getOppositeSide(sideToMove);
         for (int testSquare = A1; testSquare <= H8; testSquare++) {
 
             int piece = squares[testSquare];
@@ -570,8 +595,8 @@ public class Board {
                             }
                         }
                     }
-                    else
-                    {
+                    else {
+
                         if (pieceFile != FILE_A && getPieceSide(squares[testSquare - 9]) == WHITE) {
                             moves[moveIndex++] = createMove(testSquare, testSquare - 9);
                         }
