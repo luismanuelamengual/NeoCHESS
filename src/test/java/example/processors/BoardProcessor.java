@@ -2,19 +2,23 @@
 package example.processors;
 
 import org.neochess.engine.Board;
+import org.neochess.engine.evaluators.DefaultEvaluator;
+import org.neochess.engine.evaluators.Evaluator;
 import org.neogroup.sparks.console.Command;
 import org.neogroup.sparks.console.Console;
 import org.neogroup.sparks.console.processors.ConsoleProcessor;
 import org.neogroup.sparks.console.processors.ProcessCommands;
 
-@ProcessCommands({"print", "init", "flip", "move", "list"})
+@ProcessCommands({"print", "init", "flip", "move", "list", "evaluate"})
 public class BoardProcessor extends ConsoleProcessor {
 
     private boolean flipped;
     private Board board;
+    private Evaluator evaluator;
 
     public BoardProcessor() {
         flipped = false;
+        evaluator = new DefaultEvaluator();
         board = new Board();
         board.setInitialPosition();
     }
@@ -41,6 +45,9 @@ public class BoardProcessor extends ConsoleProcessor {
                 break;
             case "list":
                 printLegalMoves();
+                break;
+            case "evaluate":
+                System.out.println ("Score: " + evaluator.evaluate(board));
                 break;
         }
     }
