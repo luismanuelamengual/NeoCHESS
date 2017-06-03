@@ -6,10 +6,11 @@ import java.util.List;
 
 public class Board {
 
-    public static final int EMPTY = 0;
+    public static final int INVALIDSIDE = 2;
+    public static final int WHITE = 0;
+    public static final int BLACK = 1;
 
-    public static final int WHITE = 1;
-    public static final int BLACK = 2;
+    public static final int EMPTY = 0;
 
     public static final int PAWN = 1;
     public static final int KNIGHT = 2;
@@ -181,7 +182,7 @@ public class Board {
          7, 15, 15, 15,  3, 15, 15, 11
     };
 
-    private static int[] pieceSide = {EMPTY, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, BLACK, BLACK, BLACK, BLACK, BLACK, BLACK};
+    private static int[] pieceSide = {INVALIDSIDE, WHITE, WHITE, WHITE, WHITE, WHITE, WHITE, BLACK, BLACK, BLACK, BLACK, BLACK, BLACK};
 
     private static int[] pieceFigure = {EMPTY, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING};
 
