@@ -362,8 +362,7 @@ public class Board {
         return inCheck;
     }
 
-    public static int getSquare (int file, int rank)
-    {
+    public static int getSquare (int file, int rank) {
         return (rank * 8) + file;
     }
 
@@ -371,23 +370,19 @@ public class Board {
         return mailbox[mailbox64[square] - (verticalOffset * 10) + horizontalOffset];
     }
 
-    public static int getSquareFile (int square)
-    {
+    public static int getSquareFile (int square) {
         return square & 7;
     }
 
-    public static int getSquareRank (int square)
-    {
+    public static int getSquareRank (int square) {
         return square >> 3;
     }
 
-    public static int getPieceSide (int piece)
-    {
+    public static int getPieceSide (int piece) {
         return pieceSide[piece];
     }
 
-    public static int getPieceFigure (int piece)
-    {
+    public static int getPieceFigure (int piece) {
         return pieceFigure[piece];
     }
 
@@ -432,9 +427,6 @@ public class Board {
                 else if (getSquareRank(toSquare) == RANK_8) {
                     int promotionPiece = (move >> MOVE_PROMOTION_PIECE_OFFSET) & MOVE_PROMOTION_PIECE_MASK;
                     movingPiece = promotionPiece != EMPTY ? promotionPiece : WHITE_QUEEN;
-                }
-                else if (getSquareRank(fromSquare) == RANK_2 && getSquareRank(toSquare) == RANK_4) {
-                    epSquare = (fromSquare + toSquare) / 2;
                 }
             }
             else {
