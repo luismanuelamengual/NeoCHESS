@@ -5,14 +5,41 @@ import org.neochess.engine.Board;
 
 public class DefaultEvaluator extends Evaluator {
 
-    public static final int PHASES_COUNT = 8;
-    public static final int SCORE_PAWN = 100;
-    public static final int SCORE_KNIGHT = 340;
-    public static final int SCORE_BISHOP = 330;
-    public static final int SCORE_ROOK = 520;
-    public static final int SCORE_QUEEN = 1020;
-    public static final int SCORE_KING = 10000;
-    public static final int SCORE_ORIGINAL_MATERIAL = (16*SCORE_PAWN) + (4*SCORE_KNIGHT) + (4*SCORE_BISHOP) + (4*SCORE_ROOK) + (2*SCORE_QUEEN);
+    private static final int PHASES_COUNT = 8;
+
+    private static final int SCORE_PAWN = 100;
+    private static final int SCORE_KNIGHT = 340;
+    private static final int SCORE_BISHOP = 330;
+    private static final int SCORE_ROOK = 520;
+    private static final int SCORE_QUEEN = 1020;
+    private static final int SCORE_KING = 10000;
+
+    private static final int SCORE_ORIGINAL_MATERIAL = (16*SCORE_PAWN) + (4*SCORE_KNIGHT) + (4*SCORE_BISHOP) + (4*SCORE_ROOK) + (2*SCORE_QUEEN);
+
+    private static final int SCORE_SIDE_TO_MOVE = 15;
+
+    private static final int[][] SCORE_PAWN_POSITION = {
+        {
+            0,   0,   0,   0,   0,   0,   0,   0,
+            0,   0,   0, -30, -30,   0,   0,   0,
+            1,   2,   3, -10, -10,   3,   2,   1,
+            2,   4,   6,   8,   8,   6,   4,   2,
+            3,   6,   9,  12,  12,   9,   6,   3,
+            4,   8,  12,  16,  16,  12,   8,   4,
+            5,  10,  15,  20,  20,  15,  10,   5,
+            0,   0,   0,   0,   0,   0,   0,   0
+        },
+        {
+            0,   0,   0,   0,   0,   0,   0,   0,
+            5,  10,  15,  20,  20,  15,  10,   5,
+            4,   8,  12,  16,  16,  12,   8,   4,
+            3,   6,   9,  12,  12,   9,   6,   3,
+            2,   4,   6,   8,   8,   6,   4,   2,
+            1,   2,   3, -10, -10,   3,   2,   1,
+            0,   0,   0, -30, -30,   0,   0,   0,
+            0,   0,   0,   0,   0,   0,   0,   0
+        }
+    };
 
     @Override
     public int evaluate(Board board) {
@@ -50,34 +77,33 @@ public class DefaultEvaluator extends Evaluator {
         }
         phase = PHASES_COUNT - (materialScore * PHASES_COUNT / SCORE_ORIGINAL_MATERIAL);
 
-        int score = 0;
+        int score[] = new int[2];
         for (int square = Board.A1; square <= Board.H8; square++) {
-            int file = Board.getSquareFile(square);
-            int rank = Board.getSquareRank(square);
             int piece = board.getPiece(square);
             int pieceSide = Board.getPieceSide(piece);
             int pieceFigure = Board.getPieceFigure(piece);
             switch (pieceFigure) {
                 case Board.PAWN:
-                    score += pieceSide == Board.WHITE ? SCORE_PAWN : -SCORE_PAWN;
+                    score[pieceSide] += SCORE_PAWN;
                     break;
                 case Board.KNIGHT:
-                    score += pieceSide == Board.WHITE ? SCORE_KNIGHT : -SCORE_KNIGHT;
+                    score[pieceSide] += SCORE_KNIGHT;
                     break;
                 case Board.BISHOP:
-                    score += pieceSide == Board.WHITE ? SCORE_BISHOP : -SCORE_BISHOP;
+                    score[pieceSide] += SCORE_BISHOP;
                     break;
                 case Board.ROOK:
-                    score += pieceSide == Board.WHITE ? SCORE_ROOK : -SCORE_ROOK;
+                    score[pieceSide] += SCORE_ROOK;
                     break;
                 case Board.QUEEN:
-                    score += pieceSide == Board.WHITE ? SCORE_QUEEN : -SCORE_QUEEN;
+                    score[pieceSide] += SCORE_QUEEN;
                     break;
                 case Board.KING:
-                    score += pieceSide == Board.WHITE ? SCORE_KING : -SCORE_KING;
+                    score[pieceSide] += SCORE_KING;
                     break;
             }
         }
-        return score;
+        score[board.getSideToMove()] += SCORE_SIDE_TO_MOVE;
+        return score[Board.WHITE] - score[Board.BLACK];
     }
 }
