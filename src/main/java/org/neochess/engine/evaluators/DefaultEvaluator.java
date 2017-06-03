@@ -18,27 +18,46 @@ public class DefaultEvaluator extends Evaluator {
 
     private static final int SCORE_SIDE_TO_MOVE = 15;
 
-    private static final int[][] SCORE_PAWN_POSITION = {
-        {
-            0,   0,   0,   0,   0,   0,   0,   0,
-            0,   0,   0, -30, -30,   0,   0,   0,
-            1,   2,   3, -10, -10,   3,   2,   1,
-            2,   4,   6,   8,   8,   6,   4,   2,
-            3,   6,   9,  12,  12,   9,   6,   3,
-            4,   8,  12,  16,  16,  12,   8,   4,
-            5,  10,  15,  20,  20,  15,  10,   5,
-            0,   0,   0,   0,   0,   0,   0,   0
-        },
-        {
-            0,   0,   0,   0,   0,   0,   0,   0,
-            5,  10,  15,  20,  20,  15,  10,   5,
-            4,   8,  12,  16,  16,  12,   8,   4,
-            3,   6,   9,  12,  12,   9,   6,   3,
-            2,   4,   6,   8,   8,   6,   4,   2,
-            1,   2,   3, -10, -10,   3,   2,   1,
-            0,   0,   0, -30, -30,   0,   0,   0,
-            0,   0,   0,   0,   0,   0,   0,   0
-        }
+    private static final int[][] SCORE_PAWN_POSITION = {{
+        0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0, -30, -30,   0,   0,   0,
+        1,   2,   3, -10, -10,   3,   2,   1,
+        2,   4,   6,   8,   8,   6,   4,   2,
+        3,   6,   9,  12,  12,   9,   6,   3,
+        4,   8,  12,  16,  16,  12,   8,   4,
+        5,  10,  15,  20,  20,  15,  10,   5,
+        0,   0,   0,   0,   0,   0,   0,   0
+    }, {
+        0,   0,   0,   0,   0,   0,   0,   0,
+        5,  10,  15,  20,  20,  15,  10,   5,
+        4,   8,  12,  16,  16,  12,   8,   4,
+        3,   6,   9,  12,  12,   9,   6,   3,
+        2,   4,   6,   8,   8,   6,   4,   2,
+        1,   2,   3, -10, -10,   3,   2,   1,
+        0,   0,   0, -30, -30,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0
+    }};
+
+    private static final int[] SCORE_KNIGHT_POSITION = {
+        -10, -10, -10, -10, -10, -10, -10, -10,
+        -10,   0,   0,   0,   0,   0,   0, -10,
+        -10,   0,   5,   5,   5,   5,   0, -10,
+        -10,   0,   5,  10,  10,   5,   0, -10,
+        -10,   0,   5,  10,  10,   5,   0, -10,
+        -10,   0,   5,   5,   5,   5,   0, -10,
+        -10,   0,   0,   0,   0,   0,   0, -10,
+        -10, -10, -10, -10, -10, -10, -10, -10
+    };
+
+    private static final int[] SCORE_BISHOP_POSITION = {
+          0,  -5, -10, -10, -10, -10,  -5,   0,
+         -5,   2,   0,   0,   0,   0,   2,  -5,
+        -10,   0,   6,   5,   5,   6,   0, -10,
+        -10,   0,   5,  10,  10,   5,   0, -10,
+        -10,   0,   5,  10,  10,   5,   0, -10,
+        -10,   0,   6,   5,   5,   6,   0, -10,
+         -5,   2,   0,   0,   0,   0,   2,  -5,
+          0,  -5, -10, -10, -10, -10,  -5,   0
     };
 
     @Override
@@ -85,12 +104,15 @@ public class DefaultEvaluator extends Evaluator {
             switch (pieceFigure) {
                 case Board.PAWN:
                     score[pieceSide] += SCORE_PAWN;
+                    score[pieceSide] += SCORE_PAWN_POSITION[pieceSide][square];
                     break;
                 case Board.KNIGHT:
                     score[pieceSide] += SCORE_KNIGHT;
+                    score[pieceSide] += SCORE_KNIGHT_POSITION[square];
                     break;
                 case Board.BISHOP:
                     score[pieceSide] += SCORE_BISHOP;
+                    score[pieceSide] += SCORE_BISHOP_POSITION[square];
                     break;
                 case Board.ROOK:
                     score[pieceSide] += SCORE_ROOK;
