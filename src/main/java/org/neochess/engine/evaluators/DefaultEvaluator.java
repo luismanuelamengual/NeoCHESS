@@ -17,6 +17,7 @@ public class DefaultEvaluator extends Evaluator {
     private static final int SCORE_ORIGINAL_MATERIAL = (16*SCORE_PAWN) + (4*SCORE_KNIGHT) + (4*SCORE_BISHOP) + (4*SCORE_ROOK) + (2*SCORE_QUEEN);
 
     private static final int SCORE_SIDE_TO_MOVE = 15;
+    private static final int SCORE_MINOR_NOT_DEVELOPED = -15;
 
     private static final int[][] SCORE_PAWN_POSITION = {{
         0,   0,   0,   0,   0,   0,   0,   0,
@@ -60,6 +61,8 @@ public class DefaultEvaluator extends Evaluator {
           0,  -5, -10, -10, -10, -10,  -5,   0
     };
 
+    private static final int[] BASE_RANK = { Board.RANK_1, Board.RANK_8 };
+
     @Override
     public int evaluate(Board board) {
 
@@ -69,6 +72,7 @@ public class DefaultEvaluator extends Evaluator {
         int pawnsCountByFile[][] = new int[2][8];
         for (int square = Board.A1; square <= Board.H8; square++) {
             int squareFile = Board.getSquareFile(square);
+            int squareRank = Board.getSquareRank(square);
             int piece = board.getPiece(square);
             int pieceSide = Board.getPieceSide(piece);
             int pieceFigure = Board.getPieceFigure(piece);
@@ -98,6 +102,7 @@ public class DefaultEvaluator extends Evaluator {
 
         int score[] = new int[2];
         for (int square = Board.A1; square <= Board.H8; square++) {
+            int squareRank = Board.getSquareRank(square);
             int piece = board.getPiece(square);
             int pieceSide = Board.getPieceSide(piece);
             int pieceFigure = Board.getPieceFigure(piece);
@@ -109,10 +114,20 @@ public class DefaultEvaluator extends Evaluator {
                 case Board.KNIGHT:
                     score[pieceSide] += SCORE_KNIGHT;
                     score[pieceSide] += SCORE_KNIGHT_POSITION[square];
+                    if (phase <= 2) {
+                        if (squareRank == BASE_RANK[pieceSide]) {
+                            score[pieceSide] += SCORE_MINOR_NOT_DEVELOPED;
+                        }
+                    }
                     break;
                 case Board.BISHOP:
                     score[pieceSide] += SCORE_BISHOP;
                     score[pieceSide] += SCORE_BISHOP_POSITION[square];
+                    if (phase <= 2) {
+                        if (squareRank == BASE_RANK[pieceSide]) {
+                            score[pieceSide] += SCORE_MINOR_NOT_DEVELOPED;
+                        }
+                    }
                     break;
                 case Board.ROOK:
                     score[pieceSide] += SCORE_ROOK;
