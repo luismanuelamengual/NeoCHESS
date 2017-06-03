@@ -2,13 +2,10 @@
 package example.processors;
 
 import org.neochess.engine.Board;
-import org.neochess.engine.Move;
 import org.neogroup.sparks.console.Command;
 import org.neogroup.sparks.console.Console;
 import org.neogroup.sparks.console.processors.ConsoleProcessor;
 import org.neogroup.sparks.console.processors.ProcessCommands;
-
-import java.util.List;
 
 @ProcessCommands({"print", "init", "flip", "move", "list"})
 public class BoardProcessor extends ConsoleProcessor {
@@ -39,7 +36,7 @@ public class BoardProcessor extends ConsoleProcessor {
                 String moveString = command.getParameters().get(0);
                 int fromSquare = getSquareFromString(moveString.substring(0,2));
                 int toSquare = getSquareFromString(moveString.substring(2));
-                board.makeMove(new Move(fromSquare, toSquare));
+                board.makeMove(Board.createMove(fromSquare, toSquare));
                 printBoard();
                 break;
             case "list":
@@ -106,10 +103,14 @@ public class BoardProcessor extends ConsoleProcessor {
     }
 
     private void printLegalMoves () {
-        List<Move> moves = board.getLegalMoves();
-        for (Move move : moves) {
-            System.out.print(getSquareString(move.getFromSquare()));
-            System.out.print(getSquareString(move.getToSquare()));
+        int[] moves = new int[200];
+        board.generateLegalMoves(moves);
+        for (int move : moves) {
+            if (move == 0) {
+                break;
+            }
+            System.out.print(getSquareString(Board.getMoveFromSquare(move)));
+            System.out.print(getSquareString(Board.getMoveToSquare(move)));
             System.out.print(" ");
         }
         System.out.println();

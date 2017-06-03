@@ -277,26 +277,6 @@ public class Board {
         sideToMove = WHITE;
     }
 
-    public void makeMove (Move move) {
-        makeMove (createMove(move.getFromSquare(), move.getToSquare()));
-    }
-
-    public List<Move> getLegalMoves () {
-        List<Move> moves = new ArrayList<>();
-        int[] generatedMoves = new int[200];
-        generateLegalMoves (generatedMoves);
-        for (int move : generatedMoves) {
-            if (move == 0) {
-                break;
-            }
-            int fromSquare = (move >> MOVE_FROM_SQUARE_OFFSET) & MOVE_FROM_SQUARE_MASK;
-            int toSquare = (move >> MOVE_TO_SQUARE_OFFSET) & MOVE_TO_SQUARE_MASK;
-            int promotionPiece = (move >> MOVE_PROMOTION_PIECE_OFFSET) & MOVE_PROMOTION_PIECE_MASK;
-            moves.add(new Move(fromSquare, toSquare, promotionPiece));
-        }
-        return moves;
-    }
-
     public boolean isSquareAttacked (int square, int side) {
 
         for (int testSquare = A1; testSquare <= H8; testSquare++) {
@@ -348,7 +328,7 @@ public class Board {
         return isKingSquareAttacked(sideToMove);
     }
 
-    protected boolean isKingSquareAttacked (int side) {
+    public boolean isKingSquareAttacked (int side) {
 
         boolean inCheck = false;
         int oppositeSide = getOppositeSide(side);
@@ -362,50 +342,7 @@ public class Board {
         return inCheck;
     }
 
-    public static int getSquare (int file, int rank) {
-        return (rank * 8) + file;
-    }
-
-    public static int getOffsetSquare (int square, int horizontalOffset, int verticalOffset) {
-        return mailbox[mailbox64[square] - (verticalOffset * 10) + horizontalOffset];
-    }
-
-    public static int getSquareFile (int square) {
-        return square & 7;
-    }
-
-    public static int getSquareRank (int square) {
-        return square >> 3;
-    }
-
-    public static int getPieceSide (int piece) {
-        return pieceSide[piece];
-    }
-
-    public static int getPieceFigure (int piece) {
-        return pieceFigure[piece];
-    }
-
-    public static int getOppositeSide (int side) {
-        return side == WHITE? BLACK : WHITE;
-    }
-
-    protected int createMove (int fromSquare, int toSquare) {
-        int move = 0;
-        move |= (fromSquare << MOVE_FROM_SQUARE_OFFSET);
-        move |= (toSquare << MOVE_TO_SQUARE_OFFSET);
-        return move;
-    }
-
-    protected int createMove (int fromSquare, int toSquare, int promotionPiece) {
-        int move = 0;
-        move |= (fromSquare << MOVE_FROM_SQUARE_OFFSET);
-        move |= (toSquare << MOVE_TO_SQUARE_OFFSET);
-        move |= (promotionPiece << MOVE_PROMOTION_PIECE_OFFSET);
-        return move;
-    }
-
-    protected int makeMove (int move) {
+    public int makeMove (int move) {
 
         int fromSquare = (move >> MOVE_FROM_SQUARE_OFFSET) & MOVE_FROM_SQUARE_MASK;
         int toSquare = (move >> MOVE_TO_SQUARE_OFFSET) & MOVE_TO_SQUARE_MASK;
@@ -478,7 +415,7 @@ public class Board {
         return appliedMove;
     }
 
-    protected void unmakeMove (int move) {
+    public void unmakeMove (int move) {
 
         int fromSquare = (move >> MOVE_FROM_SQUARE_OFFSET) & MOVE_FROM_SQUARE_MASK;
         int toSquare = (move >> MOVE_TO_SQUARE_OFFSET) & MOVE_TO_SQUARE_MASK;
@@ -537,28 +474,30 @@ public class Board {
         sideToMove = getOppositeSide(sideToMove);
     }
 
-    protected void generateLegalMoves (int[] moves) {
+    public void generateLegalMoves (int[] moves) {
         int currentSideToMove = sideToMove;
         generatePseudoLegalMoves(moves);
-        int moveIndex, moveShiftIndex;
-        for (moveIndex = 0, moveShiftIndex = 0; moveIndex < moves.length; moveIndex++) {
+        int moveIndex = 0;
+        for (int currentMoveIndex = 0; currentMoveIndex < moves.length; currentMoveIndex++) {
 
-            int move = moves[moveIndex];
-            if (moveShiftIndex != moveIndex) {
-                moves[moveShiftIndex] = move;
-            }
+            int move = moves[currentMoveIndex];
             if (move == 0) {
                 break;
             }
+
             int appliedMove = makeMove(move);
             if (!isKingSquareAttacked(currentSideToMove)) {
-                moveShiftIndex++;
+                if (moveIndex != currentMoveIndex) {
+                    moves[moveIndex] = move;
+                }
+                moveIndex++;
             }
             unmakeMove(appliedMove);
         }
+        moves[moveIndex] = 0;
     }
 
-    protected void generatePseudoLegalMoves (int[] moves) {
+    public void generatePseudoLegalMoves (int[] moves) {
 
         int moveIndex = 0;
         int oppositeSide = getOppositeSide(sideToMove);
@@ -667,5 +606,52 @@ public class Board {
             }
         }
         moves[moveIndex++] = 0;
+    }
+
+    public static int getSquare (int file, int rank) {
+        return (rank * 8) + file;
+    }
+
+    public static int getSquareFile (int square) {
+        return square & 7;
+    }
+
+    public static int getSquareRank (int square) {
+        return square >> 3;
+    }
+
+    public static int getPieceSide (int piece) {
+        return pieceSide[piece];
+    }
+
+    public static int getPieceFigure (int piece) {
+        return pieceFigure[piece];
+    }
+
+    public static int getOppositeSide (int side) {
+        return side == WHITE? BLACK : WHITE;
+    }
+
+    public static int createMove (int fromSquare, int toSquare) {
+        int move = 0;
+        move |= (fromSquare << MOVE_FROM_SQUARE_OFFSET);
+        move |= (toSquare << MOVE_TO_SQUARE_OFFSET);
+        return move;
+    }
+
+    public static int createMove (int fromSquare, int toSquare, int promotionPiece) {
+        int move = 0;
+        move |= (fromSquare << MOVE_FROM_SQUARE_OFFSET);
+        move |= (toSquare << MOVE_TO_SQUARE_OFFSET);
+        move |= (promotionPiece << MOVE_PROMOTION_PIECE_OFFSET);
+        return move;
+    }
+
+    public static int getMoveFromSquare (int move) {
+        return (move >> MOVE_FROM_SQUARE_OFFSET) & MOVE_FROM_SQUARE_MASK;
+    }
+
+    public static int getMoveToSquare (int move) {
+        return (move >> MOVE_TO_SQUARE_OFFSET) & MOVE_TO_SQUARE_MASK;
     }
 }
