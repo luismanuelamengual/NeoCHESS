@@ -1,9 +1,6 @@
 package example;
 
 import example.processors.BoardProcessor;
-import org.neochess.core.File;
-import org.neochess.core.Rank;
-import org.neochess.core.Square;
 import org.neogroup.sparks.Application;
 import org.neogroup.sparks.console.ConsoleModule;
 
