@@ -1,9 +1,9 @@
 
 package example.processors;
 
-import org.neochess.engine.Board;
-import org.neochess.engine.evaluators.DefaultEvaluator;
-import org.neochess.engine.evaluators.Evaluator;
+import org.neochess.core.Board;
+import org.neochess.core.evaluators.DefaultEvaluator;
+import org.neochess.core.evaluators.Evaluator;
 import org.neogroup.sparks.console.Command;
 import org.neogroup.sparks.console.Console;
 import org.neogroup.sparks.console.processors.ConsoleProcessor;

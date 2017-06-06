@@ -1,8 +1,5 @@
 
-package org.neochess.engine;
-
-import java.util.ArrayList;
-import java.util.List;
+package org.neochess.core;
 
 public class Board {
 

@@ -1,7 +1,7 @@
 
-package org.neochess.engine.evaluators;
+package org.neochess.core.evaluators;
 
-import org.neochess.engine.Board;
+import org.neochess.core.Board;
 
 public class DefaultEvaluator extends Evaluator {
 
