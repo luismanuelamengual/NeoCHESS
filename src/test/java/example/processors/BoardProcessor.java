@@ -12,6 +12,16 @@ import org.neogroup.sparks.console.processors.ProcessCommands;
 @ProcessCommands({"print", "init", "flip", "move", "list", "evaluate"})
 public class BoardProcessor extends ConsoleProcessor {
 
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_BLACK = "\u001B[30m";
+    public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_GREEN = "\u001B[32m";
+    public static final String ANSI_YELLOW = "\u001B[33m";
+    public static final String ANSI_BLUE = "\u001B[34m";
+    public static final String ANSI_PURPLE = "\u001B[35m";
+    public static final String ANSI_CYAN = "\u001B[36m";
+    public static final String ANSI_WHITE = "\u001B[37m";
+
     private boolean flipped;
     private Board board;
     private Evaluator evaluator;
@@ -31,7 +41,7 @@ public class BoardProcessor extends ConsoleProcessor {
                 board.setInitialPosition();
                 break;
             case "print":
-                printBoard ();
+                printBoard (console);
                 break;
             case "flip":
                 flipped = !flipped;
@@ -41,13 +51,13 @@ public class BoardProcessor extends ConsoleProcessor {
                 int fromSquare = getSquareFromString(moveString.substring(0,2));
                 int toSquare = getSquareFromString(moveString.substring(2));
                 board.makeMove(Board.createMove(fromSquare, toSquare));
-                printBoard();
+                printBoard(console);
                 break;
             case "list":
-                printLegalMoves();
+                printLegalMoves(console);
                 break;
             case "evaluate":
-                System.out.println ("Score: " + evaluator.evaluate(board));
+                console.println ("Score: " + evaluator.evaluate(board));
                 break;
         }
     }
@@ -109,65 +119,79 @@ public class BoardProcessor extends ConsoleProcessor {
         return Board.getSquare(file, rank);
     }
 
-    private void printLegalMoves () {
+    private void printLegalMoves (Console console) {
         int[] moves = new int[200];
         board.generateLegalMoves(moves);
         for (int move : moves) {
             if (move == 0) {
                 break;
             }
-            System.out.print(getSquareString(Board.getMoveFromSquare(move)));
-            System.out.print(getSquareString(Board.getMoveToSquare(move)));
-            System.out.print(" ");
+            console.print(getSquareString(Board.getMoveFromSquare(move)));
+            console.print(getSquareString(Board.getMoveToSquare(move)));
+            console.print(" ");
         }
-        System.out.println();
+        console.println();
     }
 
-    private void printBoard () {
-        System.out.print("   ");
-        System.out.println("╔═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╗");
+    private void printBoard (Console console) {
+        console.print("   ");
+        console.println("╔═══╦═══╦═══╦═══╦═══╦═══╦═══╦═══╗");
         for (int rank = Board.RANK_8; rank >= Board.RANK_1; rank--) {
             int currentRank = rank;
             if (flipped) {
                 currentRank = 7 - currentRank;
             }
-            System.out.print(" ");
-            System.out.print(getRankString(currentRank));
-            System.out.print(" ");
-            System.out.print("║");
+            console.print(" ");
+            console.print(getRankString(currentRank));
+            console.print(" ");
+            console.print("║");
             for (int file = Board.FILE_A; file <= Board.FILE_H; file++) {
                 int currentFile = file;
                 if (flipped) {
                     currentFile = 7 - currentFile;
                 }
                 int square = Board.getSquare(currentFile,currentRank);
-                System.out.print(" ");
-                System.out.print(getPieceString(board.getPiece(square)));
-                System.out.print(" ║");
+                int piece = board.getPiece(square);
+                int pieceSide = Board.getPieceSide(piece);
+                console.print(" ");
+                if (pieceSide == Board.WHITE) {
+                    console.print(ANSI_YELLOW);
+                    console.print(getPieceString(piece));
+                    console.print(ANSI_RESET);
+                }
+                else if (pieceSide == Board.BLACK) {
+                    console.print(ANSI_PURPLE);
+                    console.print(getPieceString(piece));
+                    console.print(ANSI_RESET);
+                }
+                else {
+                    console.print(" ");
+                }
+                console.print(" ║");
             }
-            System.out.println();
+            console.println();
 
             if (rank == Board.RANK_1) {
-                System.out.print("   ");
-                System.out.println("╚═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╝");
+                console.print("   ");
+                console.println("╚═══╩═══╩═══╩═══╩═══╩═══╩═══╩═══╝");
             }
             else {
-                System.out.print("   ");
-                System.out.println("╠═══╬═══╬═══╬═══╬═══╬═══╬═══╬═══╣");
+                console.print("   ");
+                console.println("╠═══╬═══╬═══╬═══╬═══╬═══╬═══╬═══╣");
             }
         }
 
-        System.out.print("   ");
+        console.print("   ");
         for (int file = Board.FILE_A; file <= Board.FILE_H; file++) {
             int currentFile = file;
             if (flipped) {
                 currentFile = 7 - currentFile;
             }
-            System.out.print("  ");
-            System.out.print(getFileString(currentFile));
-            System.out.print(" ");
+            console.print("  ");
+            console.print(getFileString(currentFile));
+            console.print(" ");
         }
-        System.out.println();
+        console.println();
     }
 
     private String getPieceString (int piece) {
